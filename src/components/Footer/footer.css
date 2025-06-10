@@ -1,0 +1,22 @@
+/* src/components/layout/Footer.css */
+
+/* 1) Footer am Seitenende, dunkler Hintergrund */
+footer {
+  margin: 0;
+  padding: 1rem 2rem;          /* Oben/Unten 1rem, Links/Rechts 2rem */
+  background-color: #111;      /* Gleicher Farbton wie Header */
+  color: #cccccc;              /* Hellgrauer Text */
+  border-top: 1px solid #333;  /* Dünne Linie oben zum Hauptinhalt abtrennen */
+  
+  /* Damit der Footer-Inhalt nicht von der festen Sidebar verdeckt wird: */
+  margin-left: 220px;
+  text-align: center;          /* Zentrierter Text im Footer */
+  position: relative;          /* Standardposition (nicht fixed) */
+  bottom: 0;                   /* Unten an der Seite – aber nicht fix */
+}
+
+/* 2) Absatz im Footer (falls du <p>‐Tag nutzt) */
+footer p {
+  margin: 0;                   /* Verhindert doppeltes Padding, falls mehrere <p> */
+  font-size: 0.9rem;           /* Etwas kleinere Schrift für Copyright etc. */
+}

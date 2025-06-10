@@ -1,0 +1,69 @@
+/* Navigation.css */
+
+/* 1) Grundlegendes Styling der Sidebar */
+.navigation {
+  position: fixed;         /* Festsetzen am Viewport */
+  top: 0;
+  left: 0;
+  height: 100vh;           /* 100% der Fensterhöhe */
+  width: 220px;            /* Breite der Sidebar */
+  background-color: #1a1a1a;/* Sehr dunkles Grau/Schwarz */
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.5);
+  padding-top: 2rem;       /* Oben etwas Abstand */
+  display: flex;
+  flex-direction: column;  /* Vertikale Anordnung */
+  z-index: 1000;           /* Damit sie immer oben bleibt */
+}
+
+/* 2) Navigationsliste ohne Standard-Bulletpoints */
+.navigation ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* 3) Einzelne Listenelemente (Kasten um den Link) */
+.navigation li {
+  margin: 0.5rem 0;        /* Abstand zwischen den Einträgen */
+}
+
+/* 4) Styling der Link-Elemente */
+.navigation a {
+  display: block;                   /* Link als Block-Element */
+  padding: 0.75rem 1rem;            /* Innenabstand */
+  color: #e0e0e0;                   /* Helles Grau/Weiß für Text */
+  text-decoration: none;            /* Entfernt Unterstreichung */
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 4px;               /* Abgerundete Ecken */
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* 5) Hover-Effekt */
+.navigation a:hover {
+  background-color: #333;           /* Etwas helleres Grau beim Hover */
+  color: #ffffff;                   /* Weißer Text beim Hover */
+}
+
+/* 6) Aktiver Link (aktuelle Seite) */
+.navigation a.active {
+  background-color: #ff6600;        /* Akzentfarbe Orange */
+  color: #ffffff;                   /* Weißer Text auf dem orangen Kasten */
+}
+
+/* 7) Responsive Fallback (optional) */
+/*    Wenn das Viewport sehr schmal wird, schiebt Sidebar sich nach oben */
+@media screen and (max-width: 600px) {
+  .navigation {
+    position: relative;
+    width: 100%;
+    height: auto;
+    box-shadow: none;
+    padding: 1rem 0.5rem;
+    flex-direction: row;
+    justify-content: center;
+  }
+  .navigation li {
+    margin: 0 0.5rem;
+  }
+}

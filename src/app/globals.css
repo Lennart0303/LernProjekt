@@ -4,13 +4,26 @@
   --background: #ffffff;
   --foreground: #171717;
 }
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Beispiel: globals.css oder eine eigene CSS-Datei */
+main {
+  margin-left: 220px; /* gleiche Breite wie .navigation */
+  margin-right: 150px;
+  padding: 1rem;      /* optional: Innenabstand */
+  /* … weiterer Stil … */
+} 
+main ul {
+  margin: 0;
+  padding-left: 1.25rem;  /* Einzug, damit die Punkte nicht in der Sidebar kleben */
+  list-style-type: disc;   /* klassische runde Aufzählungszeichen */
+  list-style-position: inside;
 }
+
+/* 2) Orangefarbene Bullets */
+main ul li::marker {
+  color: #ff6600; /* dein Orange-Akzent */
+}
+
+
 
 @media (prefers-color-scheme: dark) {
   :root {

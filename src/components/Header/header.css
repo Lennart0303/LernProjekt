@@ -1,0 +1,35 @@
+/* src/components/layout/Header.css */
+
+header {
+  margin: 0;
+  padding: 1rem 2rem;
+  background-color: #111;
+  color: #ffffff;
+  border-bottom: 1px solid #333;
+  
+  /* 1) Flex-Layout beibehalten, aber in Spaltenrichtung */
+  display: flex;
+  flex-direction: column;     /* Statt „row“ (default) jetzt „column“ */
+  align-items: flex-start;    /* Texte linksbündig untereinander */
+  /* Alternativ: align-items: center; für zentrierten Block */
+  
+  /* 2) Platz schaffen, damit nichts unter der Sidebar verschwindet */
+  margin-left: 220px;
+  /* Höhe nicht mehr nötig, da Inhalt sich autom. hochzieht */
+  /* height: 60px; */
+}
+
+/* h1 ganz oben */
+header h1 {
+  font-size: 1.5rem;
+  margin: 0;
+  font-weight: 600;
+}
+
+/* h2 darunter */
+header h2 {
+  font-size: 1rem;
+  margin: 0.25rem 0 0 0;   /* Kleiner Abstand oben zum h1 */
+  color: #cccccc;
+  font-weight: 400;
+}
