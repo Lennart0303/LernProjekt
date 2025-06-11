@@ -5,6 +5,7 @@ Dieses Repository enthält eine einfache Full-Stack-Anwendung mit einem React-Ne
 ---
 
 ## 📁 Ordnerstruktur
+```
 LernProjekt/
 └── myapp/
 ├── frontend/ # React-Next.js-Frontend
@@ -20,7 +21,7 @@ LernProjekt/
 └── application.properties
 .gitignore # gemeinsame Ignorierregeln
 README.md # dieses Dokument
-
+```
 ## 🛠 Technologien & Dependencies
 
 ### Frontend (myapp/frontend)
