@@ -1,5 +1,3 @@
-/* src/components/layout/Footer.css */
-
 /* 1) Footer am Seitenende, dunkler Hintergrund */
 footer {
   margin: 0;
@@ -9,9 +7,10 @@ footer {
   border-top: 1px solid #333;  /* Dünne Linie oben zum Hauptinhalt abtrennen */
   
   /* Damit der Footer-Inhalt nicht von der festen Sidebar verdeckt wird: */
-  margin-left: 220px;
+  left: 220px;
+  right: 0;
   text-align: center;          /* Zentrierter Text im Footer */
-  position: relative;          /* Standardposition (nicht fixed) */
+  position: fixed;          /* Standardposition (nicht fixed) */
   bottom: 0;                   /* Unten an der Seite – aber nicht fix */
 }
 

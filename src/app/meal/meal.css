@@ -1,0 +1,36 @@
+.mealpage {
+    margin-left: 220px;
+    /* wegen Sidebar */
+    padding: 2rem;
+}
+
+.mealcard {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    background: #4e4444;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.mealcard img {
+    width: 200px;
+    height: auto;
+    object-fit: cover;
+}
+
+.mealinfo {
+    padding: 1rem;
+}
+
+.mealinfo h1 {
+    font-size: larger;
+    color: #ff6600;
+    margin: 0 0 0.5rem 0;
+}
+
+.mealinfo p {
+    line-height: 1.5;
+    margin: 0;
+}
