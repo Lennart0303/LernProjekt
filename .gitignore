@@ -1,44 +1,78 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/myapp/myfrontend/node_modules
-/myapp/myfrontend/.pnp
-/myapp/myfrontend.pnp.*
-/myapp/myfrontend.yarn/*
-/myapp/myfrontend!.yarn/patches
-/myapp/myfrontend!.yarn/plugins
-/myapp/myfrontend!.yarn/releases
-/myapp/myfrontend!.yarn/versions
+/myapp/frontend/node_modules
+/myapp/frontend/.pnp
+/myapp/frontend.pnp.*
+/myapp/frontend.yarn/*
+/myapp/frontend!.yarn/patches
+/myapp/frontend!.yarn/plugins
+/myapp/frontend!.yarn/releases
+/myapp/frontend!.yarn/versions
 
 # testing
-/myapp/myfrontend/coverage
+/myapp/frontend/coverage
 
 # next.js
-/myapp/myfrontend/.next/
-/myapp/myfrontend/out/
+/myapp/frontend/.next/
+/myapp/frontend/out/
 
 # production
-/myapp/myfrontend/build
+/myapp/frontend/build
 
 # misc
-/myapp/myfrontend.DS_Store
-/myapp/myfrontend*.pem
+/myapp/frontend.DS_Store
+/myapp/frontend*.pem
 
 # debug
-/myapp/myfrontendnpm-debug.log*
-/myapp/myfrontendyarn-debug.log*
-/myapp/myfrontendyarn-error.log*
-/myapp/myfrontend.pnpm-debug.log*
+/myapp/frontendnpm-debug.log*
+/myapp/frontendyarn-debug.log*
+/myapp/frontendyarn-error.log*
+/myapp/frontend.pnpm-debug.log*
 
 # env files (can opt-in for committing if needed)
-/myapp/myfrontend.env*
+/myapp/frontend.env*
 
 # vercel
-/myapp/myfrontend.vercel
+/myapp/frontend.vercel
 
 # typescript
-/myapp/myfrontend*.tsbuildinfo
-/myapp/myfrontendnext-env.d.ts
+/myapp/frontend*.tsbuildinfo
+/myapp/frontendnext-env.d.ts
 
 # === GLOBAL ===
 .DS_Store
+
+myapp/backend/HELP.md
+myapp/backend/target/
+myapp/backend/.mvn/wrapper/maven-wrapper.jar
+myapp/backend/!**/src/main/**/target/
+myapp/backend/!**/src/test/**/target/
+
+### STS ###
+myapp/backend/.apt_generated
+myapp/backend/.classpath
+myapp/backend/.factorypath
+myapp/backend/.project
+myapp/backend/.settings
+myapp/backend/.springBeans
+myapp/backend/.sts4-cache
+
+### IntelliJ IDEA ###
+myapp/backend/.idea
+myapp/backend/*.iws
+myapp/backend/*.iml
+myapp/backend/*.ipr
+
+### NetBeans ###
+myapp/backend/nbproject/private/
+myapp/backend/nbbuild/
+myapp/backend/dist/
+myapp/backend/nbdist/
+myapp/backend/.nb-gradle/
+myapp/backend/build/
+myapp/backend/!**/src/main/**/build/
+myapp/backend/!**/src/test/**/build/
+
+### VS Code ###
+myapp/backend/.vscode/
