@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Header from "@/components/Header/page";
 import Navigation from "@/components/Navigation/page";
 import "./create_Meal.css"; // optional, für benutzerdefinierte Stile
+import { METHODS } from "http";
 
 export default function CreateMealPage() {
     const [name, setName] = useState("");
@@ -26,18 +27,27 @@ export default function CreateMealPage() {
             return;
         }
 
-        const newMeal = {
-            name,
-            description,
-            imageFile,
-        };
-
-        console.log("Gericht erstellt:", newMeal);
-        setSuccessMessage("Gericht erfolgreich erstellt!");
-
-        // später: Speichern in DB oder API-Aufruf
-        // Beispiel:
-        // await fetch("/api/meals", { method: "POST", body: JSON.stringify(newMeal) })
+        fetch("http://localhost:8080/api/meal", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name: name,
+                description: description,
+                imageID: 1
+            })
+        }).then(response => {
+            if (!response.ok) {
+                setSuccessMessage("Es gab einen Fehler beim erstellen des Gerichtes mit dem Fehlercode: " + response.status);
+                return;
+            } else {
+                setSuccessMessage("Es wurde erfolgreich erstellt " + response.status)
+            }
+            return response.json();
+        }).catch(error => {
+            console.error("Fehler:", error.message);
+        });
 
         // Reset
         setName("");

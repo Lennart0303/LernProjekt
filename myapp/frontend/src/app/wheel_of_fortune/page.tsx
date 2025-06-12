@@ -11,33 +11,17 @@ export default function WheelPage() {
     const [result, setResult] = useState<Segment | null>(null);
 
     useEffect(() => { // eigentliche fetch anfrage an den server um die Daten zu bekommen
-        setSegments([
-            {
-                name: "Pizza",
-                description: "Klassische Margherita mit Tomate und Käse",
-                imageUrl: "/images/pizza.jpg",
-            },
-            {
-                name: "Salat",
-                description: "Frischer Gartensalat mit Vinaigrette",
-                imageUrl: "/images/salat.jpg",
-            },
-            {
-                name: "Sushi",
-                description: "Lachs- und Avocado-Rollen",
-                imageUrl: "/images/sushi.jpg",
-            },
-            {
-                name: "Pasta",
-                description: "Spaghetti Aglio e Olio",
-                imageUrl: "/images/pasta.jpg",
-            },
-            {
-                name: "Curry",
-                description: "Indisches Gemüse-Curry mit Kokosmilch",
-                imageUrl: "/images/curry.jpg",
-            },
-        ]);
+        fetch("http://localhost:8080/api/meal").then(response => {
+            if(!response.ok){
+                setSegments([null]);
+                return;
+            }
+            return response.json();
+        }).then(data => {
+            setSegments(data);
+        }).catch(error => {
+            console.error("Fehler:", error.message);
+        })
     }, []);
 
     const handleFinished = (winner: Segment) => {
