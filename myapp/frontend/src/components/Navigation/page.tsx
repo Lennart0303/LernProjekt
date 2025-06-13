@@ -12,6 +12,7 @@ export default function Navigation() {
     { label: 'Glücksrad', href: '/wheel_of_fortune' },
     { label: 'Gericht erstellen', href: '/create_Meal' },
     { label: 'Gerichte', href: '/meal' },
+    {label: 'Feedback', href: '/feedback'}
   ];
 
   return (

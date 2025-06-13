@@ -30,7 +30,7 @@ public class MealController {
         if (meals.isEmpty()) {
             return ResponseEntity.status(500).body(null);
         } else {
-            return ResponseEntity.ok(mealRepository.getAllMeals());
+            return ResponseEntity.ok(meals);
         }
     }
 
