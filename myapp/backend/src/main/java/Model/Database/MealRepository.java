@@ -30,6 +30,27 @@ public class MealRepository {
         }
     }
 
+    public List<Meal> getMealByName(String query) {
+        if (query == null || query.isEmpty()) {
+            return getAllMeals();
+        }
+        String wildcad = "%" + query.trim() + "%";
+        try {
+            return jbdc.query("SELECT * FROM MEAL WHERE mealName LIKE ?",
+                    (rs, rowNum) -> {
+                        Meal meal = new Meal(
+                                rs.getInt("id"),
+                                rs.getString("mealName"),
+                                rs.getString("mealDescription"),
+                                rs.getInt("imageID"));
+                        return meal;
+                    }, wildcad);
+        } catch (Exception e) {
+            System.out.println("Error while fetching meals: " + e.getMessage());
+            return List.of(); // Return an empty list in case of error
+        }
+    }
+
     public Meal getMealByID(int id) {
         try {
             return jbdc.queryForObject("SELECT * FROM MEAL WHERE id=?",
