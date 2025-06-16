@@ -2,8 +2,10 @@
 import React, { useState, useEffect } from "react";
 
 import Navigation from "@/components/Navigation/page";
+import { useAuth } from "@/components/context/AuthContext";
 import Header from "@/components/Header/page";
 import Footer from "@/components/Footer/page";
+import { handleAuthError } from "@/components/utils/page";
 import "./feedback.css";
 
 
@@ -13,6 +15,7 @@ interface Feedback {
 }
 
 export default function feedback() {
+    const { token } = useAuth();
     const [neuesFeedback, setNeuesFeedback] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
 
@@ -21,10 +24,12 @@ export default function feedback() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
+        if (!token) return;
         fetch("http://localhost:8080/api/feedback", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
             },
             body: JSON.stringify({
                 feedback: neuesFeedback,
@@ -32,7 +37,7 @@ export default function feedback() {
         }).then(response => {
             if (!response.ok) {
                 setSuccessMessage("Es gab einen Fehler beim erstellen des Feedbacks mit dem Fehlercode: " + response.status);
-                return;
+                if (handleAuthError(response)) return;;
             } else {
                 setSuccessMessage("Es wurde erfolgreich erstellt " + response.status)
             }
@@ -63,7 +68,7 @@ export default function feedback() {
                             placeholder="Schreibe hier deine Ideen oder Anmerkungen..."
                             required
                             className="feedback-input"
-                            onChange={e =>setNeuesFeedback(e.target.value) }
+                            onChange={e => setNeuesFeedback(e.target.value)}
                         ></textarea>
                         <button type="button" onClick={handleSubmit} className="feedback-button">Absenden</button>
                         <span>{successMessage}</span>

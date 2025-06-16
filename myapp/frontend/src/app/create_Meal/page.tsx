@@ -1,12 +1,14 @@
 // src/pages/CreateMealPage.tsx
 "use client";
 import React, { useState, useEffect } from "react";
+import { useAuth } from "@/components/context/AuthContext";
 import Header from "@/components/Header/page";
 import Navigation from "@/components/Navigation/page";
+import { handleAuthError } from "@/components/utils/page";
 import "./create_Meal.css"; // optional, für benutzerdefinierte Stile
-import { METHODS } from "http";
 
 export default function CreateMealPage() {
+    const { token } = useAuth();
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [imageFile, setImageFile] = useState<File | null>(null); // Dateityp für Bild
@@ -27,10 +29,12 @@ export default function CreateMealPage() {
             return;
         }
 
+        if (!token) return;
         fetch("http://localhost:8080/api/meal", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
             },
             body: JSON.stringify({
                 name: name,
@@ -40,7 +44,7 @@ export default function CreateMealPage() {
         }).then(response => {
             if (!response.ok) {
                 setSuccessMessage("Es gab einen Fehler beim erstellen des Gerichtes mit dem Fehlercode: " + response.status);
-                return;
+                if (handleAuthError(response)) return;;
             } else {
                 setSuccessMessage("Es wurde erfolgreich erstellt " + response.status)
             }

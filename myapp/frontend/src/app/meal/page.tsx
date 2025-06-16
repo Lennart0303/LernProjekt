@@ -4,19 +4,28 @@ import React, { useState, useEffect } from "react";
 import { Segment } from "next/dist/server/app-render/types";
 import Navigation from "@/components/Navigation/page";
 import Header from "@/components/Header/page";
+import { useAuth } from "@/components/context/AuthContext";
+import { handleAuthError } from "@/components/utils/page";
 import "./meal.css"; // optional, für benutzerdefinierte Stile
 
 export default function WheelPage() {
+    const { token } = useAuth();
     const [search, setSearch] = useState("");
     const [segments, setSegments] = useState<Segment[]>([]);
     const [successMessage, setSuccesMessage] = useState("");
 
-    useEffect(() => { // eigentliche fetch anfrage an den server um die Daten zu bekommen
-        fetch("http://localhost:8080/api/meal").then(response => {
+    useEffect(() => {
+        if (!token) return;
+        fetch("http://localhost:8080/api/meal", {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,   // <<< hier den JWT mitsenden
+            },
+        }).then(response => {
             if (!response.ok) {
                 setSegments([null]);
                 setSuccesMessage("Fehler bei der Abfrage mit dem Fehlercode " + response.status);
-                return [];
+                if (handleAuthError(response)) return; [];
             }
             return response.json();
         }).then(data => {
@@ -24,14 +33,20 @@ export default function WheelPage() {
         }).catch(error => {
             console.error("Fehler:", error.message);
         })
-    }, []);
+    }, [token]);
 
     const searchMeal = (query: string) => {
-        fetch("http://localhost:8080/api/meal/search" + "?q=" + query).then(response => {
+        if(!token) return;
+        fetch("http://localhost:8080/api/meal/search" + "?q=" + query, {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,   // <<< hier den JWT mitsenden
+            },
+        }).then(response => {
             if (!response.ok) {
                 setSegments([]);
                 setSuccesMessage("Es gab ein Fehler bei der Abfrage mit dem Fehlercode: " + response.status);
-                return;
+                if (handleAuthError(response)) return;;
             }
             return response.json();
         }).then(data => {

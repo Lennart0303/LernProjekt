@@ -5,16 +5,25 @@ import CustomRoulette from "@/components/Wheel/page"; // jetzt deine neue Kompon
 import { Segment } from "next/dist/server/app-render/types";
 import Navigation from "@/components/Navigation/page";
 import Header from "@/components/Header/page";
+import { useAuth } from "@/components/context/AuthContext";
+import { handleAuthError } from "@/components/utils/page";
 
 export default function WheelPage() {
+    const { token } = useAuth();
     const [segments, setSegments] = useState<Segment[]>([]);
     const [result, setResult] = useState<Segment | null>(null);
 
-    useEffect(() => { // eigentliche fetch anfrage an den server um die Daten zu bekommen
-        fetch("http://localhost:8080/api/meal").then(response => {
-            if(!response.ok){
+    useEffect(() => {
+        if (!token) return;
+        fetch("http://localhost:8080/api/meal", {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,   // <<< hier den JWT mitsenden
+            },
+        }).then(response => {
+            if (!response.ok) {
                 setSegments([null]);
-                return;
+                if (handleAuthError(response)) return;
             }
             return response.json();
         }).then(data => {
@@ -22,7 +31,7 @@ export default function WheelPage() {
         }).catch(error => {
             console.error("Fehler:", error.message);
         })
-    }, []);
+    }, [token]);
 
     const handleFinished = (winner: Segment) => {
         setResult(winner);
@@ -39,7 +48,7 @@ export default function WheelPage() {
                 {segments.length > 0 && (
                     <div style={{ display: "flex", gap: 32, alignItems: "flex-start" }}>
                         {/* Linke Spalte: Rad und darunter Ergebnis-Name */}
-                        <div style={{ textAlign: "center", flexShrink: 0, padding:24 }}>
+                        <div style={{ textAlign: "center", flexShrink: 0, padding: 24 }}>
                             <CustomRoulette
                                 segments={segments}
                                 onFinished={handleFinished}
@@ -55,7 +64,7 @@ export default function WheelPage() {
                         <div style={{ flex: 1 }}>
                             {result ? (
                                 <>
-                                    <h2 style={{ margin: "0 0 8px 0", color: "#ff6600", fontSize: "2rem" , fontWeight: "bold" }}>
+                                    <h2 style={{ margin: "0 0 8px 0", color: "#ff6600", fontSize: "2rem", fontWeight: "bold" }}>
                                         {result.name}
                                     </h2>
                                     <p style={{ margin: "0 0 12px 0", lineHeight: 1.4 }}>
@@ -73,7 +82,7 @@ export default function WheelPage() {
                                     />
                                 </>
                             ) : (
-                                <p style={{ fontStyle: "italic", color: "#aaa"}}>
+                                <p style={{ fontStyle: "italic", color: "#aaa" }}>
                                     Drehe das Rad, um dein Gericht zu sehen
                                 </p>
                             )}

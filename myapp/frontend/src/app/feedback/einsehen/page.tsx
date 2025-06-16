@@ -3,7 +3,9 @@ import React, { useState, useEffect } from "react";
 
 import Navigation from "@/components/Navigation/page";
 import Header from "@/components/Header/page";
+import { useAuth } from "@/components/context/AuthContext";
 import Footer from "@/components/Footer/page";
+import { handleAuthError } from "@/components/utils/page";
 import "./einsehen.css";
 
 
@@ -13,15 +15,23 @@ interface Feedback {
 }
 
 export default function feedback() {
-    const [feedback, setFeedback] = useState<Feedback[] >([])
+    const { token } = useAuth();
+    const [feedback, setFeedback] = useState<Feedback[]>([])
     const [successMessage, setSuccesMessage] = useState("");
 
-    useEffect(() => { // eigentliche fetch anfrage an den server um die Daten zu bekommen
-        fetch("http://localhost:8080/api/feedback").then(response => {
+    useEffect(() => { 
+        if(!token) return;
+        fetch("http://localhost:8080/api/feedback", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            },
+        }).then(response => {
             if (!response.ok) {
                 setFeedback([]);
                 setSuccesMessage("Fehler bei der Abfrage mit dem Fehlercode " + response.status);
-                return [];
+                if (handleAuthError(response)) return [];
             }
             return response.json();
         }).then(data => {
@@ -29,7 +39,7 @@ export default function feedback() {
         }).catch(error => {
             console.error("Fehler:", error.message);
         })
-    }, []);
+    }, [token]);
 
     return (
         <div>

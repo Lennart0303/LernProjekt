@@ -1,6 +1,7 @@
 package Model.Controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +24,7 @@ public class FeedbackController {
         this.repo = repo;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<Feedback>> getAllMeals() {
         List<Feedback> feedbacks = repo.getFeedback();
@@ -33,6 +35,7 @@ public class FeedbackController {
         }
     }
 
+    @PreAuthorize("hasRole('USER')  or hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<Feedback> createMeal(@RequestBody Feedback feedback) {
         int success = repo. createFeedback(feedback);

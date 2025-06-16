@@ -1,6 +1,7 @@
 package Model.Controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +25,7 @@ public class MealController {
         this.mealRepository = mealRepository;
     }
 
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<Meal>> getAllMeals() {
         List<Meal> meals = mealRepository.getAllMeals();
@@ -34,28 +36,31 @@ public class MealController {
         }
     }
 
+    @PreAuthorize("hasRole('USER')  or hasRole('ADMIN')")
     @GetMapping("/search")
-    public ResponseEntity<List<Meal>> getMealByID(@RequestParam(name = "q", required = false) String query){
+    public ResponseEntity<List<Meal>> getMealByID(@RequestParam(name = "q", required = false) String query) {
         List<Meal> queryMeal = mealRepository.getMealByName(query);
         return ResponseEntity.ok(queryMeal);
     }
 
+    @PreAuthorize("hasRole('USER')  or hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<Meal> getMealByID(@PathVariable int id) {
         Meal meal = mealRepository.getMealByID(id);
-        if(meal == null){
+        if (meal == null) {
             return ResponseEntity.status(500).body(null);
-        }else {
+        } else {
             return ResponseEntity.ok(meal);
         }
     }
 
+    @PreAuthorize("hasRole('USER')  or hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<Meal> createMeal(@RequestBody Meal meal){
+    public ResponseEntity<Meal> createMeal(@RequestBody Meal meal) {
         int success = mealRepository.createMeal(meal);
-        if (success>0){
+        if (success > 0) {
             return ResponseEntity.ok(meal);
-        }else {
+        } else {
             return ResponseEntity.status(500).body(null);
         }
     }
