@@ -39,7 +39,7 @@ public class UserRespository {
                     (rs, rn) -> new User(
                             rs.getInt("id"),
                             rs.getString("username"),
-                            rs.getString("passwordH ash"),
+                            rs.getString("passwordHash"),
                             rs.getString("role")),
                     username);
             return Optional.of(u);
