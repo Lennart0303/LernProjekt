@@ -30,7 +30,7 @@ export default function CreateMealPage() {
         }
 
         if (!token) return;
-        fetch("http://localhost:8080/api/meal", {
+        fetch("https://localhost:8443/api/meal", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

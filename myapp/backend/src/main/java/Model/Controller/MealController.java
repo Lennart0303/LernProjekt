@@ -17,7 +17,7 @@ import Model.Classes.Meal;
 
 @RestController
 @RequestMapping("/api/meal")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://localhost:3000")
 public class MealController {
     private final MealRepository mealRepository;
 

@@ -2,6 +2,8 @@
 
 # dependencies
 /myapp/frontend/node_modules
+/myapp/frontend/localhost+2-key.pem
+/myapp/frontend/localhost+2.pem
 /myapp/frontend/.pnp
 /myapp/frontend.pnp.*
 /myapp/frontend.yarn/*
@@ -42,6 +44,9 @@
 
 # === GLOBAL ===
 .DS_Store
+
+# keys
+myapp/backend/src/main/resources/keystore.p12
 
 myapp/backend/HELP.md
 myapp/backend/target/

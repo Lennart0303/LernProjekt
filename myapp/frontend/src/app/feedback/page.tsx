@@ -25,7 +25,7 @@ export default function feedback() {
         e.preventDefault();
 
         if (!token) return;
-        fetch("http://localhost:8080/api/feedback", {
+        fetch("https://localhost:8443/api/feedback", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

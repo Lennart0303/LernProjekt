@@ -1,33 +1,51 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 
+type Decoded = { exp: number };
 interface AuthContextType {
-  token: string | null;
+  token: string | null | undefined;
   login: (jwt: string) => void;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [token, setToken] = useState<string | null>(null);
+function getValidToken(): string | null {
+  const raw = localStorage.getItem("jwt");
+  if (!raw) return null;
+  try {
+    const { exp } = jwtDecode<Decoded>(raw);
+    if (Date.now() / 1000 < exp) return raw;
+    // abgelaufen:
+    localStorage.removeItem("jwt");
+    return null;
+  } catch {
+    localStorage.removeItem("jwt");
+    return null;
+  }
+}
 
-  // Beim ersten Mount evtl. aus localStorage wiederherstellen
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [token, setToken] = useState<string | null | undefined>(undefined);
+
+
+  // Lädt den Token NUR im Browser nach Mount
   useEffect(() => {
-    const stored = localStorage.getItem("jwt");
-    if (stored) setToken(stored);
+    const valid = getValidToken();
+    setToken(valid);
   }, []);
 
-  const login = (jwt: string) => {
-    localStorage.setItem("jwt", jwt);
-    setToken(jwt);
-  };
+  const login = useCallback((newToken: string) => {
+    localStorage.setItem("jwt", newToken);
+    setToken(getValidToken());
+  }, []);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem("jwt");
     setToken(null);
-  };
+  }, []);
 
   return (
     <AuthContext.Provider value={{ token, login, logout }}>

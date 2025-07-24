@@ -15,7 +15,7 @@ export default function WheelPage() {
 
     useEffect(() => {
         if (!token) return;
-        fetch("http://localhost:8080/api/meal", {
+        fetch("https://localhost:8443/api/meal", {
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`,   // <<< hier den JWT mitsenden

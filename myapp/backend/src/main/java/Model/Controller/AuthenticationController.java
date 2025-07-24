@@ -21,7 +21,7 @@ import Model.dto.AuthDto.AuthResponse;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://localhost:3000")
 public class AuthenticationController {
     private final AuthenticationManager authMgr;
     private final JwtUtil jwtUtil;
