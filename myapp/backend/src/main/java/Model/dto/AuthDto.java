@@ -5,7 +5,7 @@ public class AuthDto {
     public record AuthRequest(String username, String password) {
     }
 
-    public record AuthResponse(String token) {
+    public record AuthResponse(String accessToken) {
     }
 
 }

@@ -15,12 +15,13 @@ export default function LoginForm() {
     try {
       const res = await fetch("https://localhost:8443/api/auth/login", {
         method: "POST",
+        credentials: "include", 
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password })
       });
       if (!res.ok) throw new Error("Login fehlgeschlagen " + res.status);
-      const { token } = await res.json();
-      login(token);
+      const { accessToken  } = await res.json();
+      login(accessToken );
     } catch (err: any) {
       setError(err.message || "Fehler beim Login");
     }

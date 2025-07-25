@@ -8,7 +8,7 @@ import { handleAuthError } from "@/components/utils/page";
 import "./create_Meal.css"; // optional, für benutzerdefinierte Stile
 
 export default function CreateMealPage() {
-    const { token } = useAuth();
+    const { accessToken, login, logout } = useAuth();
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [imageFile, setImageFile] = useState<File | null>(null); // Dateityp für Bild
@@ -29,27 +29,35 @@ export default function CreateMealPage() {
             return;
         }
 
-        if (!token) return;
+        if (!accessToken) return;
+
         fetch("https://localhost:8443/api/meal", {
             method: "POST",
+            credentials: "include",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,
+                "Authorization": `Bearer ${accessToken}`,
             },
             body: JSON.stringify({
                 name: name,
                 description: description,
                 imageID: 1
             })
-        }).then(response => {
-            if (!response.ok) {
-                setSuccessMessage("Es gab einen Fehler beim erstellen des Gerichtes mit dem Fehlercode: " + response.status);
-                if (handleAuthError(response)) return;;
-            } else {
-                setSuccessMessage("Es wurde erfolgreich erstellt " + response.status)
-            }
-            return response.json();
-        }).catch(error => {
+        }).then((res) =>
+            handleAuthError(res, login, logout).then((aborted) => {
+                if (aborted) {
+                    // Token erneuert oder weitergeleitet
+                    return Promise.reject("Auth-Abbruch");
+                }
+                // 2) nach Refresh erneut auf den ursprünglichen Response schauen
+                if (!res.ok) {
+                    setSuccessMessage(`Fehler beim Erstellen (Code ${res.status})`);
+                    return Promise.reject("API-Fehler");
+                }
+                setSuccessMessage(`Erfolg (Code ${res.status})`);
+                return res.json();
+            })
+        ).catch(error => {
             console.error("Fehler:", error.message);
         });
 

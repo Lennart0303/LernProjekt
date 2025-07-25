@@ -15,31 +15,45 @@ interface Feedback {
 }
 
 export default function feedback() {
-    const { token } = useAuth();
+    const { accessToken, login, logout } = useAuth();
     const [feedback, setFeedback] = useState<Feedback[]>([])
     const [successMessage, setSuccesMessage] = useState("");
 
-    useEffect(() => { 
-        if(!token) return;
+    useEffect(() => {
+        if (!accessToken) return;
         fetch("https://localhost:8443/api/feedback", {
             method: "GET",
+            credentials: "include",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,
+                "Authorization": `Bearer ${accessToken}`,
             },
-        }).then(response => {
-            if (!response.ok) {
-                setFeedback([]);
-                setSuccesMessage("Fehler bei der Abfrage mit dem Fehlercode " + response.status);
-                if (handleAuthError(response)) return [];
-            }
-            return response.json();
-        }).then(data => {
-            setFeedback(data);
-        }).catch(error => {
-            console.error("Fehler:", error.message);
-        })
-    }, [token]);
+        }).then(res =>
+            handleAuthError(res, login, logout).then(aborted => {
+                if (aborted) {
+                    // Refresh fehlgeschlagen oder Weiterleitung
+                    return Promise.reject("Auth-Abbruch");
+                }
+                if (!res.ok) {
+                    setFeedback([]);
+                    setSuccesMessage(`Fehler bei der Abfrage (Code ${res.status})`);
+                    return Promise.reject("API-Fehler");
+                }
+                return res.json() as Promise<Feedback[]>;
+            })
+        )
+            .then(data => {
+                setFeedback(data);
+            })
+            .catch(err => {
+                if (err === "Auth-Abbruch" || err === "API-Fehler") {
+                    // Bereits behandelt
+                    return;
+                }
+                console.error("Unbekannter Fehler:", err);
+                setSuccesMessage("Unbekannter Fehler beim Laden der Feedbacks");
+            });
+    }, [accessToken, login, logout]);
 
     return (
         <div>

@@ -9,30 +9,46 @@ import { useAuth } from "@/components/context/AuthContext";
 import { handleAuthError } from "@/components/utils/page";
 
 export default function WheelPage() {
-    const { token } = useAuth();
+    const { accessToken, login, logout } = useAuth();
     const [segments, setSegments] = useState<Segment[]>([]);
     const [result, setResult] = useState<Segment | null>(null);
 
     useEffect(() => {
-        if (!token) return;
+        if (!accessToken) return;
         fetch("https://localhost:8443/api/meal", {
+            credentials: "include",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,   // <<< hier den JWT mitsenden
+                "Authorization": `Bearer ${accessToken}`,   // <<< hier den JWT mitsenden
             },
-        }).then(response => {
-            if (!response.ok) {
-                setSegments([null]);
-                if (handleAuthError(response)) return;
-            }
-            return response.json();
-        }).then(data => {
-            setSegments(data);
-        }).catch(error => {
-            console.error("Fehler:", error.message);
-        })
-    }, [token]);
-
+        }).then(res =>
+            // 1) Auf Auth-Fehler prüfen und ggf. erneuern
+            handleAuthError(res, login, logout).then(aborted => {
+                if (aborted) {
+                    // Refresh fehlgeschlagen oder Weiterleitung zum Login
+                    return Promise.reject("Auth-Abbruch");
+                }
+                // 2) Wenn Response nicht OK, setze leeres Array und abort
+                if (!res.ok) {
+                    setSegments([]);
+                    console.log(`Fehler bei der Abfrage (Code ${res.status})`);
+                    return Promise.reject("API-Fehler");
+                }
+                // 3) Alles gut → JSON zurückgeben
+                return res.json() as Promise<Segment[]>;
+            })
+        )
+            .then(data => {
+                // 4) Daten in den State schreiben
+                setSegments(data);
+            })
+            .catch(err => {
+                // 5) Bereit abgefangene Fälle ignorieren
+                if (err === "Auth-Abbruch" || err === "API-Fehler") return;
+                console.error("Unbekannter Fehler:", err);
+                console.log("Unbekannter Fehler beim Laden der Gerichte");
+            });
+    }, [accessToken, login, logout]);
     const handleFinished = (winner: Segment) => {
         setResult(winner);
     };

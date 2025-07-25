@@ -1,54 +1,53 @@
+// src/components/context/AuthContext.tsx
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect } from "react";
-import { jwtDecode } from "jwt-decode";
+import React, {
+  createContext, useContext, useState, ReactNode, useCallback, useEffect
+} from "react";
 
-type Decoded = { exp: number };
 interface AuthContextType {
-  token: string | null | undefined;
-  login: (jwt: string) => void;
+  accessToken: string | null;
+  login: (token: string) => void;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-function getValidToken(): string | null {
-  const raw = localStorage.getItem("jwt");
-  if (!raw) return null;
-  try {
-    const { exp } = jwtDecode<Decoded>(raw);
-    if (Date.now() / 1000 < exp) return raw;
-    // abgelaufen:
-    localStorage.removeItem("jwt");
-    return null;
-  } catch {
-    localStorage.removeItem("jwt");
-    return null;
-  }
-}
-
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [token, setToken] = useState<string | null | undefined>(undefined);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
 
-
-  // Lädt den Token NUR im Browser nach Mount
-  useEffect(() => {
-    const valid = getValidToken();
-    setToken(valid);
-  }, []);
-
-  const login = useCallback((newToken: string) => {
-    localStorage.setItem("jwt", newToken);
-    setToken(getValidToken());
+  const login = useCallback((token: string) => {
+    setAccessToken(token);
   }, []);
 
   const logout = useCallback(() => {
-    localStorage.removeItem("jwt");
-    setToken(null);
+    setAccessToken(null);
+    // Cookie löschen lassen
+    fetch("/api/auth/logout", { method: "POST", credentials: "include" });
   }, []);
 
+  // in AuthContext.tsx
+  useEffect(() => {
+    // läuft nur beim ersten Mount
+    fetch("https://localhost:8443/api/auth/refresh", {
+      method: "POST",
+      credentials: "include"
+    })
+      .then(res => {
+        if (!res.ok) throw new Error();
+        return res.json();
+      })
+      .then(({ accessToken: newToken }) => {
+        setAccessToken(newToken);
+      })
+      .catch(() => {
+        // kein gültiges Cookie / Refresh gescheitert → bleibe ausgeloggt
+      });
+  }, []);  // leerer Dependency-Array: nur einmal beim Start
+
+
   return (
-    <AuthContext.Provider value={{ token, login, logout }}>
+    <AuthContext.Provider value={{ accessToken, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
@@ -58,4 +57,10 @@ export function useAuth() {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error("useAuth must be inside AuthProvider");
   return ctx;
+}
+
+export function getAccessToken() {
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error("getAccessToken must be inside AuthProvider");
+  return ctx.accessToken;
 }

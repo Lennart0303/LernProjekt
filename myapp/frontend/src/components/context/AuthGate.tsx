@@ -13,7 +13,7 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
 }
 
 function InnerGate({ children }: { children: React.ReactNode }) {
-  const { token } = useAuth();
+  const { accessToken } = useAuth();
   // Wenn kein Token, zeige Login, sonst den Content
-  return token ? <>{children}</> : <LoginForm />;
+  return accessToken ? <>{children}</> : <LoginForm />;
 }

@@ -15,7 +15,7 @@ interface Feedback {
 }
 
 export default function feedback() {
-    const { token } = useAuth();
+    const { accessToken, login, logout } = useAuth();
     const [neuesFeedback, setNeuesFeedback] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
 
@@ -24,25 +24,33 @@ export default function feedback() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!token) return;
+        if (!accessToken) return;
+
         fetch("https://localhost:8443/api/feedback", {
             method: "POST",
+            credentials: "include",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,
+                "Authorization": `Bearer ${accessToken}`,
             },
             body: JSON.stringify({
                 feedback: neuesFeedback,
             })
-        }).then(response => {
-            if (!response.ok) {
-                setSuccessMessage("Es gab einen Fehler beim erstellen des Feedbacks mit dem Fehlercode: " + response.status);
-                if (handleAuthError(response)) return;;
-            } else {
-                setSuccessMessage("Es wurde erfolgreich erstellt " + response.status)
-            }
-            return response.json();
-        }).catch(error => {
+        }).then((res) =>
+            handleAuthError(res, login, logout).then((aborted) => {
+                if (aborted) {
+                    // Token erneuert oder weitergeleitet
+                    return Promise.reject("Auth-Abbruch");
+                }
+                // 2) nach Refresh erneut auf den ursprünglichen Response schauen
+                if (!res.ok) {
+                    setSuccessMessage(`Fehler beim Erstellen (Code ${res.status})`);
+                    return Promise.reject("API-Fehler");
+                }
+                setSuccessMessage(`Erfolg (Code ${res.status})`);
+                return res.json();
+            })
+        ).catch(error => {
             console.error("Fehler:", error.message);
         });
     }

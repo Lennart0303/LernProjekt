@@ -9,53 +9,73 @@ import { handleAuthError } from "@/components/utils/page";
 import "./meal.css"; // optional, für benutzerdefinierte Stile
 
 export default function WheelPage() {
-    const { token } = useAuth();
+    const { accessToken, login, logout } = useAuth();
     const [search, setSearch] = useState("");
     const [segments, setSegments] = useState<Segment[]>([]);
     const [successMessage, setSuccesMessage] = useState("");
 
     useEffect(() => {
-        if (!token) return;
+        if (!accessToken) return;
         fetch("https://localhost:8443/api/meal", {
+            credentials: "include",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,   // <<< hier den JWT mitsenden
+                "Authorization": `Bearer ${accessToken}`,   // <<< hier den JWT mitsenden
             },
-        }).then(response => {
-            if (!response.ok) {
-                setSegments([null]);
-                setSuccesMessage("Fehler bei der Abfrage mit dem Fehlercode " + response.status);
-                if (handleAuthError(response)) return; [];
-            }
-            return response.json();
-        }).then(data => {
-            setSegments(data);
-        }).catch(error => {
-            console.error("Fehler:", error.message);
-        })
-    }, [token]);
+        }).then(res =>
+            handleAuthError(res, login, logout).then(aborted => {
+                if (aborted) return Promise.reject("Auth-Abbruch");
+                if (!res.ok) {
+                    setSegments([]);
+                    setSuccesMessage(`Fehler bei der Abfrage (Code ${res.status})`);
+                    return Promise.reject("API-Fehler");
+                }
+                return res.json() as Promise<Segment[]>;
+            })
+        )
+            .then(data => {
+                setSegments(data);
+            })
+            .catch(err => {
+                if (err === "Auth-Abbruch" || err === "API-Fehler") return;
+                console.error("Unbekannter Fehler:", err);
+                setSuccesMessage("Unbekannter Fehler beim Laden der Gerichte");
+            });
+    }, [accessToken, login, logout]);
 
     const searchMeal = (query: string) => {
-        if(!token) return;
+        if (!accessToken) return;
         fetch("https://localhost:8443/api/meal/search" + "?q=" + query, {
+            credentials: "include",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,   // <<< hier den JWT mitsenden
+                "Authorization": `Bearer ${accessToken}`,   // <<< hier den JWT mitsenden
             },
-        }).then(response => {
-            if (!response.ok) {
-                setSegments([]);
-                setSuccesMessage("Es gab ein Fehler bei der Abfrage mit dem Fehlercode: " + response.status);
-                if (handleAuthError(response)) return;;
-            }
-            return response.json();
-        }).then(data => {
-            setSegments(data);
-            setSuccesMessage("Es wurden " + data.length + " Einträge gefunden, die zu " + query + " passen");
-        }).catch(error => {
-            console.error("Fehler:", error.message);
-        })
-    }
+        }).then(res =>
+            handleAuthError(res, login, logout).then(aborted => {
+                if (aborted) return Promise.reject("Auth-Abbruch");
+                if (!res.ok) {
+                    setSegments([]);
+                    setSuccesMessage(
+                        `Fehler bei der Suche (Code ${res.status})`
+                    );
+                    return Promise.reject("API-Fehler");
+                }
+                return res.json() as Promise<Segment[]>;
+            })
+        )
+            .then(data => {
+                setSegments(data);
+                setSuccesMessage(
+                    `Es wurden ${data.length} Gerichte gefunden, die zu „${query}“ passen`
+                );
+            })
+            .catch(err => {
+                if (err === "Auth-Abbruch" || err === "API-Fehler") return;
+                console.error("Unbekannter Fehler:", err);
+                setSuccesMessage("Unbekannter Fehler bei der Suche");
+            });
+    };
 
     return (
         <div>
