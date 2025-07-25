@@ -23,12 +23,13 @@ public class JwtUtil {
         this.key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     }
 
-    public String generateToken(String username, List<String> roles) {
+    public String generateToken(String username, List<String> roles, int ammount, ChronoUnit unit) {
+        Instant now = Instant.now();
         return Jwts.builder()
                 .setSubject(username)
                 .claim("roles", roles)
-                .setIssuedAt(new Date())
-                .setExpiration(Date.from(Instant.now().plus(2, ChronoUnit.HOURS)))
+                .setIssuedAt(Date.from(now))
+                .setExpiration(Date.from(now.plus(ammount, unit)))
                 .signWith(key)
                 .compact();
     }

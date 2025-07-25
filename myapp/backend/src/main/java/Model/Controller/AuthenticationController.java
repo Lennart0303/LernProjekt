@@ -1,6 +1,9 @@
 package Model.Controller;
 
 import org.springframework.http.ResponseEntity;
+import java.time.Duration;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -8,16 +11,20 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import Model.Database.UserRespository;
+
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import Model.Classes.User;
 import Model.Security.JwtUtil;
 import Model.dto.AuthDto.AuthRequest;
 import Model.dto.AuthDto.AuthResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -44,7 +51,7 @@ public class AuthenticationController {
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody AuthRequest req) {
+    public ResponseEntity<AuthResponse> register(@RequestBody AuthRequest req, HttpServletResponse resp) {
         // 1) Prüfen, ob Username schon existiert
         if (userRepo.findByUsername(req.username()).isPresent()) {
             return ResponseEntity
@@ -57,25 +64,67 @@ public class AuthenticationController {
         User u = new User(0, req.username(), hash, "ROLE_USER");
         userRepo.creatUser(u);
 
-        // 3) Token erzeugen – hier direkt nach Registration
-        String token = jwtUtil.generateToken(u.getUsername(), List.of(u.getRole()));
+        // --- 3) Tokens erzeugen ---
+        List<String> roles = List.of(u.getRole());
+        String accessToken = jwtUtil.generateToken(u.getUsername(), roles, 5, ChronoUnit.MINUTES);
+        String refreshToken = jwtUtil.generateToken(u.getUsername(), roles, 7, ChronoUnit.DAYS);
 
-        // 4) JSON-Antwort mit Token
-        return ResponseEntity.ok(new AuthResponse(token));
+        // 4) Refresh-Token-Cookie setzen
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
+                .httpOnly(true)
+                .secure(true)
+                .path("/api/auth/refresh")
+                .maxAge(Duration.ofDays(7))
+                .sameSite("Lax")
+                .build();
+        resp.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        // 5) Access-Token zurückgeben
+        return ResponseEntity.ok(new AuthResponse(accessToken));
     }
 
     // Login
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest req) {
+    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest req, HttpServletResponse resp) {
         // 1) Credentials prüfen
         authMgr.authenticate(
                 new UsernamePasswordAuthenticationToken(req.username(), req.password()));
         // 2) Rolle aus der Datenbank holen
         User user = userRepo.findByUsername(req.username())
                 .orElseThrow(() -> new UsernameNotFoundException("User nicht gefunden"));
-        // 3) Token mit Username und Rolle generieren
-        String token = jwtUtil.generateToken(user.getUsername(), List.of(user.getRole()));
-        // 4) Zurück an den Client
-        return ResponseEntity.ok(new AuthResponse(token));
+        // 3) Tokens erzeugen
+        String accessToken = jwtUtil.generateToken(user.getUsername(), List.of(user.getRole()), 5, ChronoUnit.MINUTES);
+        String refreshToken = jwtUtil.generateToken(user.getUsername(), List.of(user.getRole()), 7, ChronoUnit.DAYS);
+
+        // 4) Refresh-Token-Cookie setzen
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
+                .httpOnly(true)
+                .secure(true)
+                .path("/api/auth/refresh")
+                .maxAge(Duration.ofDays(7))
+                .sameSite("Lax")
+                .build();
+        resp.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        // 5) Access-Token zurückgeben
+        return ResponseEntity.ok(new AuthResponse(accessToken));
+    }
+
+    /** Refresh: liest HttpOnly-Cookie und gibt neuen Access-Token aus */
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthResponse> refresh(
+            @CookieValue(name = "refreshToken", required = false) String refreshToken) {
+        // 1) prüfen, ob Cookie existiert und valide ist
+        var claims = jwtUtil.validate(refreshToken);
+        if (claims == null) {
+            return ResponseEntity.status(401).build();
+        }
+        // 2) neuen Access-Token erzeugen
+        String username = claims.getSubject();
+        @SuppressWarnings("unchecked")
+        List<String> roles = (List<String>) claims.get("roles");
+        String accessToken = jwtUtil.generateToken(username, roles, 5, ChronoUnit.MINUTES);
+
+        return ResponseEntity.ok(new AuthResponse(accessToken));
     }
 }

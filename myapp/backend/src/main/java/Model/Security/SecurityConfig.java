@@ -1,6 +1,7 @@
 package Model.Security;
 
 import org.springframework.context.annotation.Bean;
+import static org.springframework.security.config.Customizer.withDefaults;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -30,11 +31,16 @@ public class SecurityConfig {
         this.jwtUtil = jwtUtil;
     }
 
-    
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                // 1) HTTP → HTTPS umleiten
+                .redirectToHttps(withDefaults())
+
+                // 2) HSTS aktivieren
+                .headers(headers -> headers.httpStrictTransportSecurity(hsts -> hsts.includeSubDomains(true)
+                        .maxAgeInSeconds(31_536_000)))
+
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(sm -> sm
