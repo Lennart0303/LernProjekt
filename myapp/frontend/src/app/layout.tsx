@@ -27,6 +27,9 @@ type RootLayoutProps = {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="de">
+      <head>
+        <title>Was Essen?</title>
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {/* AuthGate ist eine Client‑Komponente (mit "use client") */}
         <AuthGate>{children}</AuthGate>

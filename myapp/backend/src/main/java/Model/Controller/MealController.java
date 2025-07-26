@@ -1,6 +1,7 @@
 package Model.Controller;
 
 import org.springframework.http.ResponseEntity;
+import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -56,7 +57,7 @@ public class MealController {
 
     @PreAuthorize("hasRole('USER')  or hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<Meal> createMeal(@RequestBody Meal meal) {
+    public ResponseEntity<Meal> createMeal(@Valid @RequestBody Meal meal) {
         int success = mealRepository.createMeal(meal);
         if (success > 0) {
             return ResponseEntity.ok(meal);

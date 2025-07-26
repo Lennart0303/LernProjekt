@@ -1,6 +1,7 @@
 package Model.Controller;
 
 import org.springframework.http.ResponseEntity;
+import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,7 +38,7 @@ public class FeedbackController {
 
     @PreAuthorize("hasRole('USER')  or hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<Feedback> createMeal(@RequestBody Feedback feedback) {
+    public ResponseEntity<Feedback> createMeal(@Valid @RequestBody Feedback feedback) {
         int success = repo. createFeedback(feedback);
         if (success > 0) {
             return ResponseEntity.ok(feedback);

@@ -49,6 +49,18 @@ export default function CreateMealPage() {
                     // Token erneuert oder weitergeleitet
                     return Promise.reject("Auth-Abbruch");
                 }
+
+                if (res.status === 400) {
+                    return res.json().then((errors: Record<string, string>) => {
+                        // Nur die Messages aus dem Objekt holen
+                        const messages = Object.values(errors);
+                        // Zu einer einzigen Nachricht verbinden
+                        const message = messages.join(" • ");
+                        setSuccessMessage(message);
+                        return Promise.reject("Validation-Error");
+                    });
+                }
+
                 // 2) nach Refresh erneut auf den ursprünglichen Response schauen
                 if (!res.ok) {
                     setSuccessMessage(`Fehler beim Erstellen (Code ${res.status})`);

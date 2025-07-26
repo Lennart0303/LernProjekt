@@ -39,7 +39,16 @@ public class SecurityConfig {
 
                 // 2) HSTS aktivieren
                 .headers(headers -> headers.httpStrictTransportSecurity(hsts -> hsts.includeSubDomains(true)
-                        .maxAgeInSeconds(31_536_000)))
+                        .maxAgeInSeconds(31_536_000))
+                        .contentSecurityPolicy(csp -> csp
+                                .policyDirectives(
+                                        "default-src 'self'; " +
+                                                "script-src 'self'; " + // ← nur eigene .js-Dateien
+                                                "style-src 'self' 'unsafe-inline'; " +
+                                                "img-src 'self' data:; " +
+                                                "connect-src 'self' https://localhost:8443; " +
+                                                "font-src 'self'; " +
+                                                "frame-ancestors 'none';")))
 
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))

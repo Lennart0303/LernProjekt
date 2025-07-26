@@ -2,6 +2,7 @@ package Model.Controller;
 
 import org.springframework.http.ResponseEntity;
 import java.time.Duration;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -51,7 +52,7 @@ public class AuthenticationController {
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody AuthRequest req, HttpServletResponse resp) {
+    public ResponseEntity<AuthResponse> register(@Valid @RequestBody AuthRequest req, HttpServletResponse resp) {
         // 1) Prüfen, ob Username schon existiert
         if (userRepo.findByUsername(req.username()).isPresent()) {
             return ResponseEntity
@@ -73,7 +74,7 @@ public class AuthenticationController {
         ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
                 .secure(true)
-                .sameSite("None") 
+                .sameSite("None")
                 .path("/api/auth/refresh")
                 .maxAge(Duration.ofDays(7))
                 .build();
@@ -100,7 +101,7 @@ public class AuthenticationController {
         ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
                 .secure(true)
-                .sameSite("None") 
+                .sameSite("None")
                 .path("/api/auth/refresh")
                 .maxAge(Duration.ofDays(7))
                 .build();
