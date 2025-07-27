@@ -52,13 +52,6 @@
 			<artifactId>spring-security-crypto</artifactId>
 		</dependency>
 
-		<!-- 3) Anzahl der Logins pro Minute beschränken  -->
-		<dependency>
-			<groupId>com.giffing.bucket4j.spring.boot.starter</groupId>
-			<artifactId>bucket4j-spring-boot-starter</artifactId>
-			<version>0.6.0</version>
-		</dependency>
-
 		<!-- 4) JWT‑Library (io.jsonwebtoken = JJWT) -->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>

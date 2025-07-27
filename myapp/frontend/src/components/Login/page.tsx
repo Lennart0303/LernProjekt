@@ -12,6 +12,7 @@ export default function LoginForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
     try {
       const res = await fetch("https://localhost:8443/api/auth/login", {
         method: "POST",
