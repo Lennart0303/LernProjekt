@@ -80,4 +80,4 @@ myapp/backend/!**/src/main/**/build/
 myapp/backend/!**/src/test/**/build/
 
 ### VS Code ###
-myapp/backend/.vscode/
+.vscode/settings.json

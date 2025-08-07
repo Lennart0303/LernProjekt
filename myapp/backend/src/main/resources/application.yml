@@ -1,0 +1,56 @@
+spring:
+  application:
+    name: backend
+  cache: # Cache hinzugefügt art jCache mit Caffeine
+    type: jcache
+    jcache:
+      provider: com.github.benmanes.caffeine.jcache.spi.CaffeineCachingProvider
+    cache-names:
+      - bucket4j-login-cache
+
+  datasource:
+    url: jdbc:sqlite:meals.db
+    driver-class-name: org.sqlite.JDBC
+
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+
+  jpa:
+    show-sql: true
+
+  ssl:
+    enabled: true
+
+server:
+  port: 8443
+  ssl:
+    enabled: true
+    key-store: classpath:keystore.p12
+    key-store-password: changeit
+    key-store-type: PKCS12
+    key-alias: 1
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+
+
+bucket4j:
+  enabled: true
+  filters:
+    - name: loginFilter                # ab v0.13 Pflicht, frei wählbar
+      cache-name: bucket4j-login-cache # muss mit deinem CacheConfig übereinstimmen
+      url: '^/api/auth/login$'         # RegEx für deinen Login-Endpoint
+      filter-method: servlet           # Standard-Filter-Typ
+      http-status-code: TOO_MANY_REQUESTS
+      strategy: first                  # bei mehreren Limits: nur das erste anwenden
+      rate-limits:
+        - bandwidths:
+            - capacity: 5             # Bucket-Größe (max. Tokens)
+              refill-capacity: 5      # Tokens pro Intervall (default = capacity)
+              time: 1                 # Intervall-Länge
+              unit: minutes           # Einheit (seconds, minutes, hours …) :contentReference[oaicite:0]{index=0}
+              refill-speed: interval  # Nachfüll-Verhalten: interval oder greedy :contentReference[oaicite:1]{index=1}

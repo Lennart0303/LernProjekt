@@ -52,6 +52,39 @@
 			<artifactId>spring-security-crypto</artifactId>
 		</dependency>
 
+		<!--RateLimit für Login mit Bucket4j Starter-->
+		<!-- Spring Cache Abstraction -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-cache</artifactId>
+		</dependency>
+
+		<!-- JCache API -->
+		<dependency>
+			<groupId>javax.cache</groupId>
+			<artifactId>cache-api</artifactId>
+		</dependency>
+
+		<!-- Caffeine Core -->
+		<dependency>
+			<groupId>com.github.ben-manes.caffeine</groupId>
+			<artifactId>caffeine</artifactId>
+		</dependency>
+
+		<!-- Caffeine JCache Binding -->
+		<dependency>
+			<groupId>com.github.ben-manes.caffeine</groupId>
+			<artifactId>jcache</artifactId>
+			<version>3.2.2</version>
+		</dependency>
+
+		<!-- Bucket4j Starter v0.13.x -->
+		<dependency>
+			<groupId>com.giffing.bucket4j.spring.boot.starter</groupId>
+			<artifactId>bucket4j-spring-boot-starter</artifactId>
+			<version>0.13.0</version>
+		</dependency>
+
 		<!-- 4) JWT‑Library (io.jsonwebtoken = JJWT) -->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
