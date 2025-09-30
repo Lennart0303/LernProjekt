@@ -11,7 +11,6 @@ export default function CreateMealPage() {
     const { accessToken, login, logout } = useAuth();
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
-    const [imageFile, setImageFile] = useState<File | null>(null); // Dateityp für Bild
     const [successMessage, setSuccessMessage] = useState("");
     const [previewUrl, setPreviewUrl] = useState("");
 
@@ -24,7 +23,7 @@ export default function CreateMealPage() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!name || !description || !imageFile) {
+        if (!name || !description ) {
             alert("Bitte alle Felder ausfüllen!");
             return;
         }
@@ -40,8 +39,7 @@ export default function CreateMealPage() {
             },
             body: JSON.stringify({
                 name: name,
-                description: description,
-                imageID: 1
+                description: description
             })
         }).then((res) =>
             handleAuthError(res, login, logout).then((aborted) => {
@@ -76,15 +74,6 @@ export default function CreateMealPage() {
         // Reset
         setName("");
         setDescription("");
-        setImageFile(null);
-    };
-
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            setImageFile(file);
-            setPreviewUrl(URL.createObjectURL(file)); // erzeugt temporäre URL
-        }
     };
 
     return (
@@ -115,18 +104,6 @@ export default function CreateMealPage() {
                             required
                         />
                     </label>
-
-                    <label>
-                        Bild-Datei (png oder jpg):
-                        <input type="file" accept="image/*" onChange={handleImageChange} />
-                    </label>
-
-                    {imageFile && (
-                        <div className="image-preview">
-                            <p>Vorschau:</p>
-                            <img src={previewUrl} alt="Gericht" />
-                        </div>
-                    )}
 
                     <button type="submit">Gericht speichern</button>
                     <label className="success-message">

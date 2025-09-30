@@ -2,7 +2,6 @@ package Model.Classes;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import jakarta.validation.constraints.Positive;
 
 public class Meal {
     private int id;
@@ -14,26 +13,22 @@ public class Meal {
     @Size(min = 5, max = 500, message = "Beschreibung muss 5–500 Zeichen lang sein")
     private String description;
 
-    @Positive(message = "imageID muss positiv sein")
-    private int imageID;
 
     // Default
     public Meal() {
     }
 
     // Neues Gericht
-    public Meal(String name, String description, int imageID) {
+    public Meal(String name, String description) {
         this.name = name;
         this.description = description;
-        this.imageID = imageID;
     }
 
     // Bestehendes Gericht
-    public Meal(int id, String name, String description, int imageID) {
+    public Meal(int id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.imageID = imageID;
     }
 
     // Getter
@@ -49,9 +44,6 @@ public class Meal {
         return description;
     }
 
-    public int getImageID() {
-        return imageID;
-    }
 
     // SETTER
     public void setID(int id) {
@@ -66,7 +58,4 @@ public class Meal {
         this.description = description;
     }
 
-    public void setImageID(int imageID) {
-        this.imageID = imageID;
-    }
 }

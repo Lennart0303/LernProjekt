@@ -103,7 +103,6 @@ export default function WheelPage() {
                 ) : (
                     segments.map((segment, index) => (
                         <div key={index} className="mealcard">
-                            <img src={segment.imageUrl} alt={segment.name} />
                             <div className="mealinfo">
                                 <h1>{segment.name}</h1>
                                 <p>{segment.description}</p>

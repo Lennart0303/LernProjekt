@@ -1,8 +1,7 @@
 CREATE TABLE IF NOT EXISTS MEAL (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     mealName TEXT NOT NULL,
-    mealDescription TEXT,
-    imageID INTEGER 
+    mealDescription TEXT
 );
 
 CREATE TABLE IF NOT EXISTS users (

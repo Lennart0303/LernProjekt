@@ -86,16 +86,6 @@ export default function WheelPage() {
                                     <p style={{ margin: "0 0 12px 0", lineHeight: 1.4 }}>
                                         {result.description}
                                     </p>
-                                    <img
-                                        src={result.imageUrl}
-                                        alt={result.name}
-                                        style={{
-                                            width: "100%",
-                                            borderRadius: 8,
-                                            boxShadow: "0 2px 6px rgba(0,0,0,0.4)",
-                                            objectFit: "cover",
-                                        }}
-                                    />
                                 </>
                             ) : (
                                 <p style={{ fontStyle: "italic", color: "#aaa" }}>

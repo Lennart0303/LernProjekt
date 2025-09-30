@@ -20,8 +20,7 @@ public class MealRepository {
                         Meal meal = new Meal(
                                 rs.getInt("id"),
                                 rs.getString("mealName"),
-                                rs.getString("mealDescription"),
-                                rs.getInt("imageID"));
+                                rs.getString("mealDescription"));
                         return meal;
                     });
         } catch (Exception e) {
@@ -41,8 +40,7 @@ public class MealRepository {
                         Meal meal = new Meal(
                                 rs.getInt("id"),
                                 rs.getString("mealName"),
-                                rs.getString("mealDescription"),
-                                rs.getInt("imageID"));
+                                rs.getString("mealDescription"));
                         return meal;
                     }, wildcad);
         } catch (Exception e) {
@@ -58,8 +56,7 @@ public class MealRepository {
                         Meal meal = new Meal(
                                 rs.getInt("id"),
                                 rs.getString("mealName"),
-                                rs.getString("mealDescription"),
-                                rs.getInt("imageID"));
+                                rs.getString("mealDescription"));
                         return meal;
                     }, id);
         } catch (Exception e) {
@@ -71,10 +68,9 @@ public class MealRepository {
 
     public int createMeal(Meal meal) {
         try {
-            return jbdc.update("INSERT INTO MEAL (mealName, mealDescription, imageID) VALUES(?,?,?)",
+            return jbdc.update("INSERT INTO MEAL (mealName, mealDescription) VALUES(?,?)",
                     meal.getName(),
-                    meal.getDescription(),
-                    meal.getImageID());
+                    meal.getDescription());
         } catch (Exception e) {
             System.out.println("Error while creating meal: " + e.getMessage());
             return 0; // Return 0 in case of error
