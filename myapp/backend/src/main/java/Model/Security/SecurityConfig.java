@@ -48,6 +48,9 @@ public class SecurityConfig {
                                                                 .policyDirectives(
                                                                                 "default-src 'self'; " +
                                                                                                 "script-src 'self'; " +
+                                                                                                "object-src 'none'; " +
+                                                                                                "base-uri 'none'; " +
+                                                                                                "form-action 'self'; " +
                                                                                                 "style-src 'self' 'unsafe-inline'; "
                                                                                                 +
                                                                                                 "img-src 'self' data:; "
@@ -56,14 +59,20 @@ public class SecurityConfig {
                                                                                                 +
                                                                                                 "font-src 'self'; " +
                                                                                                 "frame-ancestors 'none';"))
-                                                .addHeaderWriter(new StaticHeadersWriter("X-Content-Type-Options", "nosniff"))
-                                                // Verhindert MIME-Sniffing im Browser (erzwingt den Content-Type, schützt vor XSS durch falsche Dateitypen)
-                                                .addHeaderWriter(new StaticHeadersWriter("Referrer-Policy", "no-referrer"))
-                                                // Browser schickt keinen Referer-Header bei Requests → schützt interne Pfade/Token vor Leaks
+                                                .addHeaderWriter(new StaticHeadersWriter("X-Content-Type-Options",
+                                                                "nosniff"))
+                                                // Verhindert MIME-Sniffing im Browser (erzwingt den Content-Type,
+                                                // schützt vor XSS durch falsche Dateitypen)
+                                                .addHeaderWriter(new StaticHeadersWriter("Referrer-Policy",
+                                                                "no-referrer"))
+                                                // Browser schickt keinen Referer-Header bei Requests → schützt interne
+                                                // Pfade/Token vor Leaks
                                                 .addHeaderWriter(new StaticHeadersWriter("X-XSS-Protection", "0"))
-                                                // Schaltet den alten Browser-internen XSS-Filter explizit aus (veraltet, CSP übernimmt den Schutz)
+                                                // Schaltet den alten Browser-internen XSS-Filter explizit aus
+                                                // (veraltet, CSP übernimmt den Schutz)
                                                 .frameOptions(frame -> frame.deny()))
-                                                // Setzt X-Frame-Options: DENY → verhindert, dass deine Seite in <iframe> eingebettet wird (Clickjacking-Schutz)
+                                // Setzt X-Frame-Options: DENY → verhindert, dass deine Seite in <iframe>
+                                // eingebettet wird (Clickjacking-Schutz)
 
                                 .csrf(csrf -> csrf.disable())
                                 .sessionManagement(sm -> sm
