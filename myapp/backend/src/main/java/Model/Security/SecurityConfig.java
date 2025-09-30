@@ -13,8 +13,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.List;
 
@@ -47,10 +47,7 @@ public class SecurityConfig {
                                                 .contentSecurityPolicy(csp -> csp
                                                                 .policyDirectives(
                                                                                 "default-src 'self'; " +
-                                                                                                "script-src 'self'; " + // ←
-                                                                                                                        // nur
-                                                                                                                        // eigene
-                                                                                                                        // .js-Dateien
+                                                                                                "script-src 'self'; " +
                                                                                                 "style-src 'self' 'unsafe-inline'; "
                                                                                                 +
                                                                                                 "img-src 'self' data:; "
@@ -58,10 +55,17 @@ public class SecurityConfig {
                                                                                                 "connect-src 'self' https://localhost:8443; "
                                                                                                 +
                                                                                                 "font-src 'self'; " +
-                                                                                                "frame-ancestors 'none';")))
+                                                                                                "frame-ancestors 'none';"))
+                                                .addHeaderWriter(new StaticHeadersWriter("X-Content-Type-Options", "nosniff"))
+                                                // Verhindert MIME-Sniffing im Browser (erzwingt den Content-Type, schützt vor XSS durch falsche Dateitypen)
+                                                .addHeaderWriter(new StaticHeadersWriter("Referrer-Policy", "no-referrer"))
+                                                // Browser schickt keinen Referer-Header bei Requests → schützt interne Pfade/Token vor Leaks
+                                                .addHeaderWriter(new StaticHeadersWriter("X-XSS-Protection", "0"))
+                                                // Schaltet den alten Browser-internen XSS-Filter explizit aus (veraltet, CSP übernimmt den Schutz)
+                                                .frameOptions(frame -> frame.deny()))
+                                                // Setzt X-Frame-Options: DENY → verhindert, dass deine Seite in <iframe> eingebettet wird (Clickjacking-Schutz)
 
                                 .csrf(csrf -> csrf.disable())
-                                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                                 .sessionManagement(sm -> sm
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                                 .authorizeHttpRequests(auth -> auth
@@ -103,20 +107,8 @@ public class SecurityConfig {
                                 .orElseThrow(() -> new UsernameNotFoundException("User nicht gefunden"));
         }
 
-        @Bean
-        public CorsConfigurationSource corsConfigurationSource() {
-                CorsConfiguration cfg = new CorsConfiguration();
-                cfg.setAllowedOrigins(List.of("https://localhost:3000")); // dein React‑Host
-                cfg.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-                cfg.setAllowedHeaders(List.of("*"));
-                cfg.setAllowCredentials(true);
-                UrlBasedCorsConfigurationSource src = new UrlBasedCorsConfigurationSource();
-                src.registerCorsConfiguration("/**", cfg);
-                return src;
-        }
-
-        // Bei Rate Limit müssen trotzdem Cors angehängt werden, damit der Browser der die
-        // Anfrage annimmt ansonsten schickt das Bucket4j ohne CORS-Header
+        // Bei Rate Limit müssen trotzdem Cors angehängt werden, damit der Browser der
+        // die Anfrage annimmt ansonsten schickt das Bucket4j ohne CORS-Header
         @Bean
         public FilterRegistrationBean<CorsFilter> corsFilterRegistration() {
                 // 1) Definiere CORS-Regeln

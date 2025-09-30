@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -29,7 +28,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "https://localhost:3000")
 public class AuthenticationController {
     private final AuthenticationManager authMgr;
     private final JwtUtil jwtUtil;
@@ -62,7 +60,7 @@ public class AuthenticationController {
 
         // 2) Passwort hashen und User anlegen
         String hash = encoder.encode(req.password());
-        User u = new User(0, req.username(), hash, "ROLE_USER");
+        User u = new User(0, req.username(), hash, "USER");
         userRepo.creatUser(u);
 
         // --- 3) Tokens erzeugen ---

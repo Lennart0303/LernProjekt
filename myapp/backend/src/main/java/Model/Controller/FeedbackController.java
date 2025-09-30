@@ -3,7 +3,6 @@ package Model.Controller;
 import org.springframework.http.ResponseEntity;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,7 +16,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/feedback")
-@CrossOrigin(origins = "https://localhost:3000")
 public class FeedbackController {
     private final FeedbackRepository repo;
 
@@ -27,7 +25,7 @@ public class FeedbackController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
-    public ResponseEntity<List<Feedback>> getAllMeals() {
+    public ResponseEntity<List<Feedback>> getAllFeedback() {
         List<Feedback> feedbacks = repo.getFeedback();
         if (feedbacks.isEmpty()) {
             return ResponseEntity.status(500).body(null);
@@ -38,7 +36,7 @@ public class FeedbackController {
 
     @PreAuthorize("hasRole('USER')  or hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<Feedback> createMeal(@Valid @RequestBody Feedback feedback) {
+    public ResponseEntity<Feedback> createFeedback(@Valid @RequestBody Feedback feedback) {
         int success = repo. createFeedback(feedback);
         if (success > 0) {
             return ResponseEntity.ok(feedback);
