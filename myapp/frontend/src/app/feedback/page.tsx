@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 import Navigation from "@/components/Navigation/page";
 import { useAuth } from "@/components/context/AuthContext";
@@ -7,12 +7,6 @@ import Header from "@/components/Header/page";
 import Footer from "@/components/Footer/page";
 import { handleAuthError } from "@/components/utils/page";
 import "./feedback.css";
-
-
-interface Feedback {
-    id: number;
-    feedback: string;
-}
 
 export default function feedback() {
     const { accessToken, login, logout } = useAuth();

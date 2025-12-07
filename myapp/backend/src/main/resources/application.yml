@@ -9,7 +9,7 @@ spring:
       - bucket4j-login-cache
 
   datasource:
-    url: jdbc:sqlite:meals.db
+    url: jdbc:sqlite:/app/data/app.db
     driver-class-name: org.sqlite.JDBC
 
   sql:

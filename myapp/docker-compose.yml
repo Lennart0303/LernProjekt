@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  backend:
+    build: ./backend
+    container_name: myapp-backend
+    ports:
+      - "8443:8443"
+    volumes:
+      - ./backend/meals.db:/app/data/app.db
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+
+  frontend:
+    build: ./frontend
+    container_name: myapp-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      # Diese URL sieht der Browser  nicht der Container
+      - NEXT_PUBLIC_API_URL=https://localhost:8443
+    depends_on:
+      - backend
+
+volumes:
+  backend_data:

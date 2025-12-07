@@ -1,6 +1,6 @@
 // src/pages/CreateMealPage.tsx
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useAuth } from "@/components/context/AuthContext";
 import Header from "@/components/Header/page";
 import Navigation from "@/components/Navigation/page";
@@ -12,13 +12,6 @@ export default function CreateMealPage() {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
-    const [previewUrl, setPreviewUrl] = useState("");
-
-    useEffect(() => {
-        return () => {
-            if (previewUrl) URL.revokeObjectURL(previewUrl);
-        }
-    }, [previewUrl]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
