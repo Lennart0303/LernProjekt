@@ -13,67 +13,68 @@ public class MealRepository {
         this.jbdc = template;
     }
 
-    public List<Meal> getAllMeals() {
+    public List<Meal> getAllMeals(int userId) {
         try {
-            return jbdc.query("SELECT * FROM MEAL",
-                    (rs, rowNum) -> {
-                        Meal meal = new Meal(
-                                rs.getInt("id"),
-                                rs.getString("mealName"),
-                                rs.getString("mealDescription"));
-                        return meal;
-                    });
+            return jbdc.query("SELECT * FROM MEAL WHERE user_id = ?",
+                    (rs, rowNum) -> new Meal(
+                            rs.getInt("id"),
+                            rs.getString("mealName"),
+                            rs.getString("mealDescription"),
+                            rs.getInt("calories"),
+                            rs.getInt("user_id")),
+                    userId);
         } catch (Exception e) {
             System.out.println("Error while fetching meals: " + e.getMessage());
-            return List.of(); // Return an empty list in case of error
+            return List.of();
         }
     }
 
-    public List<Meal> getMealByName(String query) {
+    public List<Meal> getMealByName(String query, int userId) {
         if (query == null || query.isEmpty()) {
-            return getAllMeals();
+            return getAllMeals(userId);
         }
         String wildcad = "%" + query.trim() + "%";
         try {
-            return jbdc.query("SELECT * FROM MEAL WHERE mealName LIKE ?",
-                    (rs, rowNum) -> {
-                        Meal meal = new Meal(
-                                rs.getInt("id"),
-                                rs.getString("mealName"),
-                                rs.getString("mealDescription"));
-                        return meal;
-                    }, wildcad);
+            return jbdc.query("SELECT * FROM MEAL WHERE mealName LIKE ? AND user_id = ?",
+                    (rs, rowNum) -> new Meal(
+                            rs.getInt("id"),
+                            rs.getString("mealName"),
+                            rs.getString("mealDescription"),
+                            rs.getInt("calories"),
+                            rs.getInt("user_id")),
+                    wildcad, userId);
         } catch (Exception e) {
             System.out.println("Error while fetching meals: " + e.getMessage());
-            return List.of(); // Return an empty list in case of error
+            return List.of();
         }
     }
 
     public Meal getMealByID(int id) {
         try {
             return jbdc.queryForObject("SELECT * FROM MEAL WHERE id=?",
-                    (rs, rowNum) -> {
-                        Meal meal = new Meal(
-                                rs.getInt("id"),
-                                rs.getString("mealName"),
-                                rs.getString("mealDescription"));
-                        return meal;
-                    }, id);
+                    (rs, rowNum) -> new Meal(
+                            rs.getInt("id"),
+                            rs.getString("mealName"),
+                            rs.getString("mealDescription"),
+                            rs.getInt("calories"),
+                            rs.getInt("user_id")),
+                    id);
         } catch (Exception e) {
             System.out.println("Error while fetching meal by ID: " + e.getMessage());
-            return null; // Return null in case of error
+            return null;
         }
-
     }
 
     public int createMeal(Meal meal) {
         try {
-            return jbdc.update("INSERT INTO MEAL (mealName, mealDescription) VALUES(?,?)",
+            return jbdc.update("INSERT INTO MEAL (mealName, mealDescription, calories, user_id) VALUES(?,?,?,?)",
                     meal.getName(),
-                    meal.getDescription());
+                    meal.getDescription(),
+                    meal.getCalories(),
+                    meal.getUserId());
         } catch (Exception e) {
             System.out.println("Error while creating meal: " + e.getMessage());
-            return 0; // Return 0 in case of error
+            return 0;
         }
     }
 }

@@ -11,7 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 import Model.Database.MealRepository;
+import Model.Database.UserRespository;
 import java.util.List;
 import Model.Classes.Meal;
 
@@ -19,26 +23,31 @@ import Model.Classes.Meal;
 @RequestMapping("/api/meal")
 public class MealController {
     private final MealRepository mealRepository;
+    private final UserRespository userRespository;
 
-    public MealController(MealRepository mealRepository) {
+    public MealController(MealRepository mealRepository, UserRespository userRespository) {
         this.mealRepository = mealRepository;
+        this.userRespository = userRespository;
+    }
+
+    private int getCurrentUserId() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return userRespository.findByUsername(auth.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"))
+                .getId();
     }
 
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<Meal>> getAllMeals() {
-        List<Meal> meals = mealRepository.getAllMeals();
-        if (meals.isEmpty()) {
-            return ResponseEntity.status(500).body(null);
-        } else {
-            return ResponseEntity.ok(meals);
-        }
+        List<Meal> meals = mealRepository.getAllMeals(getCurrentUserId());
+        return ResponseEntity.ok(meals);
     }
 
     @PreAuthorize("hasRole('USER')  or hasRole('ADMIN')")
     @GetMapping("/search")
     public ResponseEntity<List<Meal>> getMealByID(@RequestParam(name = "q", required = false) String query) {
-        List<Meal> queryMeal = mealRepository.getMealByName(query);
+        List<Meal> queryMeal = mealRepository.getMealByName(query, getCurrentUserId());
         return ResponseEntity.ok(queryMeal);
     }
 
@@ -56,6 +65,7 @@ public class MealController {
     @PreAuthorize("hasRole('USER')  or hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<Meal> createMeal(@Valid @RequestBody Meal meal) {
+        meal.setUserId(getCurrentUserId());
         int success = mealRepository.createMeal(meal);
         if (success > 0) {
             return ResponseEntity.ok(meal);

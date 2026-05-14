@@ -11,7 +11,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # 2. Runtime Stage  schlankes Image nur mit JDK und Jar
-FROM eclipse-temurin:21-jdk
+FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
@@ -22,6 +22,6 @@ COPY --from=build /app/target/*.jar /app/app.jar
 RUN mkdir -p /app/data
 
 # Dein Backend läuft auf 8443 mit SSL
-EXPOSE 8443
+EXPOSE 8080
 
 CMD ["java", "-jar", "/app/app.jar"]

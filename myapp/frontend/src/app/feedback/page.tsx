@@ -1,5 +1,6 @@
 "use client"
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 
 import Navigation from "@/components/Navigation/page";
 import { useAuth } from "@/components/context/AuthContext";
@@ -11,16 +12,13 @@ import "./feedback.css";
 export default function feedback() {
     const { accessToken, login, logout } = useAuth();
     const [neuesFeedback, setNeuesFeedback] = useState("");
-    const [successMessage, setSuccessMessage] = useState("");
-
-
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
         if (!accessToken) return;
 
-        fetch("https://localhost:8443/api/feedback", {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/feedback`, {
             method: "POST",
             credentials: "include",
             headers: {
@@ -33,27 +31,22 @@ export default function feedback() {
         }).then((res) =>
             handleAuthError(res, login, logout).then((aborted) => {
                 if (aborted) {
-                    // Token erneuert oder weitergeleitet
                     return Promise.reject("Auth-Abbruch");
                 }
 
                 if (res.status === 400) {
                     return res.json().then((errors: Record<string, string>) => {
-                        // Nur die Messages aus dem Objekt holen
-                        const messages = Object.values(errors);
-                        // Zu einer einzigen Nachricht verbinden
-                        const message = messages.join(" • ");
-                        setSuccessMessage(message);
+                        const message = Object.values(errors).join(" • ");
+                        toast.error(message);
                         return Promise.reject("Validation-Error");
                     });
                 }
 
-                // 2) nach Refresh erneut auf den ursprünglichen Response schauen
                 if (!res.ok) {
-                    setSuccessMessage(`Fehler beim Erstellen (Code ${res.status})`);
+                    toast.error(`Fehler beim Senden (Code ${res.status})`);
                     return Promise.reject("API-Fehler");
                 }
-                setSuccessMessage(`Erfolg (Code ${res.status})`);
+                toast.success("Feedback erfolgreich gesendet!");
                 return res.json();
             })
         ).catch(error => {
@@ -85,10 +78,8 @@ export default function feedback() {
                             onChange={e => setNeuesFeedback(e.target.value)}
                         ></textarea>
                         <button type="button" onClick={handleSubmit} className="feedback-button">Absenden</button>
-                        <span>{successMessage}</span>
                     </form>
                 </section>
-
             </main>
             <Footer />
         </div>

@@ -1,30 +1,18 @@
-# 1. Build Stage für dein Next Frontend
 FROM node:20 AS build
-
 WORKDIR /app
-
-# Zuerst nur package Dateien kopieren
 COPY package.json package-lock.json* ./
-
-# Dependencies installieren
-# legacy-peer-deps löst deinen react vs react-custom-roulette Konflikt
 RUN npm install --legacy-peer-deps
-
-# Restlichen Code kopieren
 COPY . .
-
-# Production Build erzeugen
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 RUN npm run build
 
-# 2. Runtime Stage
-FROM node:20
-
+FROM node:20-slim
 WORKDIR /app
-
-# Alles aus der Build Stage übernehmen
-COPY --from=build /app ./
-
+COPY --from=build /app/public ./public
+COPY --from=build /app/.next ./.next
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/package.json ./package.json
+COPY --from=build /app/server.js ./server.js
 EXPOSE 3000
-
-# Startscript
 CMD ["node", "server.js"]

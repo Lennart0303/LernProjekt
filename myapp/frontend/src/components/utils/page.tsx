@@ -6,7 +6,7 @@ export async function handleAuthError(
 ): Promise<boolean> {
   if (response.status === 401 || response.status === 403) {
     // 1) Versuche Token-Refresh
-    const r = await fetch("https://localhost:8443/api/auth/refresh", {
+    const r = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/refresh`, {
       method: "POST",
       credentials: "include",
     });

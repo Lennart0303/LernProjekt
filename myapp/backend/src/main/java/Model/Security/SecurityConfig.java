@@ -1,8 +1,8 @@
 package Model.Security;
 
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import static org.springframework.security.config.Customizer.withDefaults;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.web.filter.CorsFilter;
@@ -30,6 +30,9 @@ public class SecurityConfig {
 
         private final JwtUtil jwtUtil;
 
+        @Value("${cors.allowed-origins}")
+        private String corsAllowedOrigin;
+
         public SecurityConfig(JwtUtil jwtUtil) {
                 this.jwtUtil = jwtUtil;
         }
@@ -37,9 +40,6 @@ public class SecurityConfig {
         @Bean
         public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
                 http
-                                // 1) HTTP → HTTPS umleiten
-                                .redirectToHttps(withDefaults())
-
                                 // 2) HSTS aktivieren
                                 .headers(headers -> headers
                                                 .httpStrictTransportSecurity(hsts -> hsts.includeSubDomains(true)
@@ -55,7 +55,7 @@ public class SecurityConfig {
                                                                                                 +
                                                                                                 "img-src 'self' data:; "
                                                                                                 +
-                                                                                                "connect-src 'self' https://localhost:8443; "
+                                                                                                "connect-src 'self'; "
                                                                                                 +
                                                                                                 "font-src 'self'; " +
                                                                                                 "frame-ancestors 'none';"))
@@ -122,8 +122,8 @@ public class SecurityConfig {
         public FilterRegistrationBean<CorsFilter> corsFilterRegistration() {
                 // 1) Definiere CORS-Regeln
                 CorsConfiguration config = new CorsConfiguration();
-                config.setAllowedOrigins(List.of("https://localhost:3000"));
-                config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                config.setAllowedOrigins(List.of(corsAllowedOrigin));
+                config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
                 config.setAllowedHeaders(List.of("*"));
                 config.setAllowCredentials(true);
                 config.setExposedHeaders(List.of("Retry-After", "X-Rate-Limit-Remaining"));

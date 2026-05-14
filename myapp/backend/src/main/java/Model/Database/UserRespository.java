@@ -56,4 +56,12 @@ public class UserRespository {
                 user.getRole());
     }
 
+    public int deleteUser(int id) {
+        return jdbc.update("DELETE FROM users WHERE id = ?", id);
+    }
+
+    public int updateRole(int id, String role) {
+        return jdbc.update("UPDATE users SET role = ? WHERE id = ?", role, id);
+    }
+
 }

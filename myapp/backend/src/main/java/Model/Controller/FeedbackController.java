@@ -26,12 +26,7 @@ public class FeedbackController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<Feedback>> getAllFeedback() {
-        List<Feedback> feedbacks = repo.getFeedback();
-        if (feedbacks.isEmpty()) {
-            return ResponseEntity.status(500).body(null);
-        } else {
-            return ResponseEntity.ok(feedbacks);
-        }
+        return ResponseEntity.ok(repo.getFeedback());
     }
 
     @PreAuthorize("hasRole('USER')  or hasRole('ADMIN')")

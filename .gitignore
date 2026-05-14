@@ -34,6 +34,8 @@
 
 # env files (can opt-in for committing if needed)
 /myapp/frontend.env*
+myapp/.env
+application-local.yml
 
 # vercel
 /myapp/frontend.vercel

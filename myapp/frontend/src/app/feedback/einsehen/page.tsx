@@ -1,5 +1,6 @@
 "use client"
 import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 
 import Navigation from "@/components/Navigation/page";
 import Header from "@/components/Header/page";
@@ -17,11 +18,10 @@ interface Feedback {
 export default function feedback() {
     const { accessToken, login, logout } = useAuth();
     const [feedback, setFeedback] = useState<Feedback[]>([])
-    const [successMessage, setSuccesMessage] = useState("");
 
     useEffect(() => {
         if (!accessToken) return;
-        fetch("https://localhost:8443/api/feedback", {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/feedback`, {
             method: "GET",
             credentials: "include",
             headers: {
@@ -31,12 +31,11 @@ export default function feedback() {
         }).then(res =>
             handleAuthError(res, login, logout).then(aborted => {
                 if (aborted) {
-                    // Refresh fehlgeschlagen oder Weiterleitung
                     return Promise.reject("Auth-Abbruch");
                 }
                 if (!res.ok) {
                     setFeedback([]);
-                    setSuccesMessage(`Fehler bei der Abfrage (Code ${res.status})`);
+                    toast.error(`Fehler bei der Abfrage (Code ${res.status})`);
                     return Promise.reject("API-Fehler");
                 }
                 return res.json() as Promise<Feedback[]>;
@@ -47,11 +46,10 @@ export default function feedback() {
             })
             .catch(err => {
                 if (err === "Auth-Abbruch" || err === "API-Fehler") {
-                    // Bereits behandelt
                     return;
                 }
                 console.error("Unbekannter Fehler:", err);
-                setSuccesMessage("Unbekannter Fehler beim Laden der Feedbacks");
+                toast.error("Unbekannter Fehler beim Laden der Feedbacks");
             });
     }, [accessToken, login, logout]);
 
@@ -60,9 +58,8 @@ export default function feedback() {
             <Header />
             <Navigation />
             <main className="feedbackPage">
-                {successMessage}
                 {feedback.length === 0 ? (
-                    <p>Gerichte werden geladen …</p>
+                    <p>Keine Feedbacks vorhanden.</p>
                 ) : (
                     feedback.map((feedback, index) => (
                         <div key={index} className="feedbackcard">
@@ -73,8 +70,6 @@ export default function feedback() {
                         </div>
                     ))
                 )}
-
-                <label></label>
             </main>
             <Footer />
         </div>

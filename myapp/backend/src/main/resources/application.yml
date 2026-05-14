@@ -18,24 +18,20 @@ spring:
       schema-locations: classpath:schema.sql
 
   jpa:
-    show-sql: true
+    show-sql: false
 
-  ssl:
-    enabled: true
+
+cors:
+  allowed-origins: https://terzenbach.com
 
 server:
-  port: 8443
-  ssl:
-    enabled: true
-    key-store: classpath:keystore.p12
-    key-store-password: changeit
-    key-store-type: PKCS12
-    key-alias: 1
+  port: 8080
+  server.forward-headers-strategy: native
 
 logging:
   level:
-    org.springframework.security: DEBUG
-    org.springframework.web: DEBUG
+    org.springframework.security: WARN
+    org.springframework.web: WARN
 
 
 bucket4j:

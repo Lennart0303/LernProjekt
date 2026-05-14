@@ -16,7 +16,7 @@ export default function WheelPage() {
 
     useEffect(() => {
         if (!accessToken) return;
-        fetch("https://localhost:8443/api/meal", {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/meal`, {
             credentials: "include",
             headers: {
                 "Content-Type": "application/json",
@@ -45,7 +45,7 @@ export default function WheelPage() {
 
     const searchMeal = (query: string) => {
         if (!accessToken) return;
-        fetch("https://localhost:8443/api/meal/search" + "?q=" + query, {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/meal/search` + "?q=" + query, {
             credentials: "include",
             headers: {
                 "Content-Type": "application/json",
@@ -106,6 +106,7 @@ export default function WheelPage() {
                             <div className="mealinfo">
                                 <h1>{segment.name}</h1>
                                 <p>{segment.description}</p>
+                                <p>{segment.calories} kcal</p>
                             </div>
                         </div>
                     ))

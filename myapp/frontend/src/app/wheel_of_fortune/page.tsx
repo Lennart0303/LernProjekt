@@ -15,7 +15,7 @@ export default function WheelPage() {
 
     useEffect(() => {
         if (!accessToken) return;
-        fetch("https://localhost:8443/api/meal", {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/meal`, {
             credentials: "include",
             headers: {
                 "Content-Type": "application/json",
@@ -85,6 +85,9 @@ export default function WheelPage() {
                                     </h2>
                                     <p style={{ margin: "0 0 12px 0", lineHeight: 1.4 }}>
                                         {result.description}
+                                    </p>
+                                    <p style={{ margin: "0 0 12px 0" }}>
+                                        {result.calories} kcal
                                     </p>
                                 </>
                             ) : (

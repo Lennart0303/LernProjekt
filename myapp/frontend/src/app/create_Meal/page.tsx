@@ -1,29 +1,35 @@
 // src/pages/CreateMealPage.tsx
 "use client";
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 import { useAuth } from "@/components/context/AuthContext";
 import Header from "@/components/Header/page";
 import Navigation from "@/components/Navigation/page";
 import { handleAuthError } from "@/components/utils/page";
-import "./create_Meal.css"; // optional, für benutzerdefinierte Stile
+import "./create_Meal.css";
 
 export default function CreateMealPage() {
     const { accessToken, login, logout } = useAuth();
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
-    const [successMessage, setSuccessMessage] = useState("");
+    const [calories, setCalories] = useState<number | "">("");
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!name || !description ) {
-            alert("Bitte alle Felder ausfüllen!");
+        if (!name || !description) {
+            toast.error("Bitte alle Felder ausfüllen!");
+            return;
+        }
+
+        if (calories === "" || Number(calories) < 1) {
+            toast.error("Bitte gib eine gültige Kalorienzahl (min. 1) ein.");
             return;
         }
 
         if (!accessToken) return;
 
-        fetch("https://localhost:8443/api/meal", {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/meal`, {
             method: "POST",
             credentials: "include",
             headers: {
@@ -32,41 +38,36 @@ export default function CreateMealPage() {
             },
             body: JSON.stringify({
                 name: name,
-                description: description
+                description: description,
+                calories: Number(calories)
             })
         }).then((res) =>
             handleAuthError(res, login, logout).then((aborted) => {
                 if (aborted) {
-                    // Token erneuert oder weitergeleitet
                     return Promise.reject("Auth-Abbruch");
                 }
 
                 if (res.status === 400) {
                     return res.json().then((errors: Record<string, string>) => {
-                        // Nur die Messages aus dem Objekt holen
-                        const messages = Object.values(errors);
-                        // Zu einer einzigen Nachricht verbinden
-                        const message = messages.join(" • ");
-                        setSuccessMessage(message);
+                        const message = Object.values(errors).join(" • ");
+                        toast.error(message);
                         return Promise.reject("Validation-Error");
                     });
                 }
 
-                // 2) nach Refresh erneut auf den ursprünglichen Response schauen
                 if (!res.ok) {
-                    setSuccessMessage(`Fehler beim Erstellen (Code ${res.status})`);
+                    toast.error(`Fehler beim Erstellen (Code ${res.status})`);
                     return Promise.reject("API-Fehler");
                 }
-                setSuccessMessage(`Erfolg (Code ${res.status})`);
+                toast.success("Gericht erfolgreich erstellt!");
+                setName("");
+                setDescription("");
+                setCalories("");
                 return res.json();
             })
         ).catch(error => {
             console.error("Fehler:", error.message);
         });
-
-        // Reset
-        setName("");
-        setDescription("");
     };
 
     return (
@@ -83,7 +84,7 @@ export default function CreateMealPage() {
                             type="text"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            placeholder="z. B. Spaghetti Bolognese"
+                            placeholder="z. B. Spaghetti Bolognese"
                             required
                         />
                     </label>
@@ -98,10 +99,19 @@ export default function CreateMealPage() {
                         />
                     </label>
 
-                    <button type="submit">Gericht speichern</button>
-                    <label className="success-message">
-                        {successMessage && <span>{successMessage}</span>}
+                    <label>
+                        Kalorien:
+                        <input
+                            type="number"
+                            min={1}
+                            placeholder="Kalorien (min. 1)"
+                            value={calories}
+                            onChange={e => setCalories(e.target.value === "" ? "" : Number(e.target.value))}
+                            required
+                        />
                     </label>
+
+                    <button type="submit">Gericht speichern</button>
                 </form>
             </main>
         </>

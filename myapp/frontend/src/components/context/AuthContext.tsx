@@ -7,21 +7,34 @@ import React, {
 
 interface AuthContextType {
   accessToken: string | null;
+  role: string | null;
   login: (token: string) => void;
   logout: () => void;
+}
+
+function getRoleFromToken(token: string): string | null {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.roles?.[0] ?? null;
+  } catch {
+    return null;
+  }
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [role, setRole] = useState<string | null>(null);
 
   const login = useCallback((token: string) => {
     setAccessToken(token);
+    setRole(getRoleFromToken(token));
   }, []);
 
   const logout = useCallback(() => {
     setAccessToken(null);
+    setRole(null);
     // Cookie löschen lassen
     fetch("/api/auth/logout", { method: "POST", credentials: "include" });
   }, []);
@@ -29,7 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // in AuthContext.tsx
   useEffect(() => {
     // läuft nur beim ersten Mount
-    fetch("https://localhost:8443/api/auth/refresh", {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/refresh`, {
       method: "POST",
       credentials: "include"
     })
@@ -39,6 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       })
       .then(({ accessToken: newToken }) => {
         setAccessToken(newToken);
+        setRole(getRoleFromToken(newToken));
       })
       .catch(() => {
         // kein gültiges Cookie / Refresh gescheitert → bleibe ausgeloggt
@@ -47,7 +61,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 
   return (
-    <AuthContext.Provider value={{ accessToken, login, logout }}>
+    <AuthContext.Provider value={{ accessToken, role, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

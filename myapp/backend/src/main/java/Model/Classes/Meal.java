@@ -1,5 +1,6 @@
 package Model.Classes;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -13,6 +14,11 @@ public class Meal {
     @Size(min = 5, max = 500, message = "Beschreibung muss 5–500 Zeichen lang sein")
     private String description;
 
+    @Min(value = 1, message = "Kalorien müssen mindestens 1 sein")
+    private int calories;
+
+    private int userId;
+
 
     // Default
     public Meal() {
@@ -24,11 +30,27 @@ public class Meal {
         this.description = description;
     }
 
+    // Neues Gericht mit Kalorien
+    public Meal(String name, String description, int calories) {
+        this.name = name;
+        this.description = description;
+        this.calories = calories;
+    }
+
     // Bestehendes Gericht
     public Meal(int id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
+    }
+
+    // Bestehendes Gericht mit Kalorien und User
+    public Meal(int id, String name, String description, int calories, int userId) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.calories = calories;
+        this.userId = userId;
     }
 
     // Getter
@@ -44,6 +66,14 @@ public class Meal {
         return description;
     }
 
+    public int getCalories() {
+        return calories;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
 
     // SETTER
     public void setID(int id) {
@@ -56,6 +86,14 @@ public class Meal {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void setCalories(int calories) {
+        this.calories = calories;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
 }

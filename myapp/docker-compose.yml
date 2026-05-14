@@ -2,20 +2,6 @@ version: "3.9"
 
 services:
 
-  traefik:
-    image: traefik:v3.0
-    container_name: myapp-traefik
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
-      - ./traefik/acme.json:/acme.json
-    networks:
-      - web
-
   backend:
     build: ./backend
     container_name: myapp-backend
@@ -28,13 +14,13 @@ services:
       - SPRING_PROFILES_ACTIVE=prod
       - JWT_SECRET=${JWT_SECRET}
     networks:
-      - web
+      - frontend_network
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=Host(`yourdomain.com`) && PathPrefix(`/api`)"
-      - "traefik.http.routers.backend.entrypoints=websecure"
-      - "traefik.http.routers.backend.tls.certresolver=letsencrypt"
-      - "traefik.http.services.backend.loadbalancer.server.port=8080"
+      - "traefik.http.routers.essensraf-backend.rule=Host(`terzenbach.com`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.essensraf-backend.entrypoints=websecure"
+      - "traefik.http.routers.essensraf-backend.tls=true"
+      - "traefik.http.services.essensraf-backend.loadbalancer.server.port=8080"
 
   frontend:
     build:
@@ -50,14 +36,14 @@ services:
     depends_on:
       - backend
     networks:
-      - web
+      - frontend_network
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=Host(`yourdomain.com`)"
-      - "traefik.http.routers.frontend.entrypoints=websecure"
-      - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
-      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
+      - "traefik.http.routers.essensraf-frontend.rule=Host(`terzenbach.com`) && PathPrefix(`/essensrad`)"
+      - "traefik.http.routers.essensraf-frontend.entrypoints=websecure"
+      - "traefik.http.routers.essensraf-frontend.tls=true"
+      - "traefik.http.services.essensraf-frontend.loadbalancer.server.port=3000"
 
 networks:
-  web:
-    external: false
+  frontend_network:
+    external: true

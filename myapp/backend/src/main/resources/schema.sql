@@ -1,7 +1,10 @@
 CREATE TABLE IF NOT EXISTS MEAL (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     mealName TEXT NOT NULL,
-    mealDescription TEXT
+    mealDescription TEXT,
+    calories INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE IF NOT EXISTS users (

@@ -14,7 +14,7 @@ export default function LoginForm() {
     e.preventDefault();
     setError("");
     try {
-      const res = await fetch("https://localhost:8443/api/auth/login", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, {
         method: "POST",
         credentials: "include", 
         headers: { "Content-Type": "application/json" },
