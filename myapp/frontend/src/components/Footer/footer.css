@@ -1,21 +1,36 @@
-/* 1) Footer am Seitenende, dunkler Hintergrund */
+/* =============================================
+   Footer — inlined within page shells where still used
+   This file kept for backward compat; most pages
+   no longer render a Footer component.
+   ============================================= */
+
 footer {
-  margin: 0;
-  padding: 1rem 2rem;          /* Oben/Unten 1rem, Links/Rechts 2rem */
-  background-color: #111;      /* Gleicher Farbton wie Header */
-  color: #cccccc;              /* Hellgrauer Text */
-  border-top: 1px solid #333;  /* Dünne Linie oben zum Hauptinhalt abtrennen */
-  
-  /* Damit der Footer-Inhalt nicht von der festen Sidebar verdeckt wird: */
-  left: 220px;
-  right: 0;
-  text-align: center;          /* Zentrierter Text im Footer */
-  position: fixed;          /* Standardposition (nicht fixed) */
-  bottom: 0;                   /* Unten an der Seite – aber nicht fix */
+  margin-left: 240px;
+  padding: 20px 40px;
+  background: #000;
+  color: #555;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.85rem;
+  text-align: center;
 }
 
-/* 2) Absatz im Footer (falls du <p>‐Tag nutzt) */
 footer p {
-  margin: 0;                   /* Verhindert doppeltes Padding, falls mehrere <p> */
-  font-size: 0.9rem;           /* Etwas kleinere Schrift für Copyright etc. */
+  margin: 4px 0;
+}
+
+footer a {
+  color: #ff6600;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+footer a:hover {
+  color: #ff8c00;
+}
+
+@media (max-width: 768px) {
+  footer {
+    margin-left: 0;
+    padding: 20px;
+  }
 }

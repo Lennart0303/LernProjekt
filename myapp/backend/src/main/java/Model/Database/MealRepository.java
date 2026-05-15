@@ -1,5 +1,6 @@
 package Model.Database;
 
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -14,6 +15,15 @@ public class MealRepository {
 
     public MealRepository(JdbcTemplate template) {
         this.jbdc = template;
+    }
+
+    @PostConstruct
+    private void migrate() {
+        try {
+            jbdc.execute("ALTER TABLE MEAL ADD COLUMN mealPreparation TEXT");
+        } catch (Exception ignored) {
+            // column already exists
+        }
     }
 
     public List<Meal> getAllMeals(int userId) {
@@ -77,6 +87,25 @@ public class MealRepository {
                     meal.getUserId());
         } catch (Exception e) {
             log.error("Error while creating meal", e);
+            return 0;
+        }
+    }
+
+    public int deleteMeal(int id) {
+        try {
+            return jbdc.update("DELETE FROM MEAL WHERE id = ?", id);
+        } catch (Exception e) {
+            log.error("Error while deleting meal", e);
+            return 0;
+        }
+    }
+
+    public int countMealsByUserId(int userId) {
+        try {
+            Integer count = jbdc.queryForObject("SELECT COUNT(*) FROM MEAL WHERE user_id = ?", Integer.class, userId);
+            return count != null ? count : 0;
+        } catch (Exception e) {
+            log.error("Error counting meals for user", e);
             return 0;
         }
     }

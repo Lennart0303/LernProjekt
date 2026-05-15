@@ -3,6 +3,7 @@ package Model.Controller;
 import org.springframework.http.ResponseEntity;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -67,6 +68,17 @@ public class MealController {
         meal.setUserId(getCurrentUserId());
         mealRepository.createMeal(meal);
         return ResponseEntity.ok(meal);
+    }
+
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteMeal(@PathVariable int id) {
+        Meal meal = mealRepository.getMealByID(id);
+        if (meal == null || meal.getUserId() != getCurrentUserId()) {
+            return ResponseEntity.notFound().build();
+        }
+        mealRepository.deleteMeal(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

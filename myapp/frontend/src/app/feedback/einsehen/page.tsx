@@ -3,13 +3,10 @@ import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 
 import Navigation from "@/components/Navigation/page";
-import Header from "@/components/Header/page";
 import { useAuth } from "@/components/context/AuthContext";
-import Footer from "@/components/Footer/page";
 import { handleAuthError } from "@/components/utils/page";
 import { AdminGuard } from "@/components/context/AdminGuard";
 import "./einsehen.css";
-
 
 interface Feedback {
     id: number;
@@ -18,7 +15,7 @@ interface Feedback {
 
 export default function FeedbackEinsehen() {
     const { accessToken, login, logout } = useAuth();
-    const [feedback, setFeedback] = useState<Feedback[]>([])
+    const [feedback, setFeedback] = useState<Feedback[]>([]);
 
     useEffect(() => {
         if (!accessToken) return;
@@ -31,9 +28,7 @@ export default function FeedbackEinsehen() {
             },
         }).then(res =>
             handleAuthError(res, login, logout).then(aborted => {
-                if (aborted) {
-                    return Promise.reject("Auth-Abbruch");
-                }
+                if (aborted) return Promise.reject("Auth-Abbruch");
                 if (!res.ok) {
                     setFeedback([]);
                     toast.error(`Fehler bei der Abfrage (Code ${res.status})`);
@@ -42,13 +37,9 @@ export default function FeedbackEinsehen() {
                 return res.json() as Promise<Feedback[]>;
             })
         )
-            .then(data => {
-                setFeedback(data);
-            })
+            .then(data => setFeedback(data))
             .catch(err => {
-                if (err === "Auth-Abbruch" || err === "API-Fehler") {
-                    return;
-                }
+                if (err === "Auth-Abbruch" || err === "API-Fehler") return;
                 console.error("Unbekannter Fehler:", err);
                 toast.error("Unbekannter Fehler beim Laden der Feedbacks");
             });
@@ -56,24 +47,36 @@ export default function FeedbackEinsehen() {
 
     return (
         <AdminGuard>
-            <div>
-                <Header />
+            <div className="app-shell">
                 <Navigation />
-                <main id="main-content" className="feedbackPage">
+                <main id="main-content" className="app-main">
+                    {/* Hero */}
+                    <div className="hero">
+                        <div>
+                            <h1>Feedback einsehen</h1>
+                            <p>Alle eingereichten Rückmeldungen auf einen Blick.</p>
+                        </div>
+                    </div>
+
                     {feedback.length === 0 ? (
-                        <p>Keine Feedbacks vorhanden.</p>
+                        <div className="feedback-empty">
+                            <span className="material-symbols-outlined">rate_review</span>
+                            <p>Noch keine Feedbacks vorhanden.</p>
+                        </div>
                     ) : (
-                        feedback.map((feedback, index) => (
-                            <div key={index} className="feedbackcard">
-                                <div className="feedbackinfo">
-                                    <h1>{feedback.id}</h1>
-                                    <p>{feedback.feedback}</p>
+                        <div className="feedback-list">
+                            {feedback.map((item, index) => (
+                                <div key={index} className="feedbackcard">
+                                    <div className="feedbackcard-accent" />
+                                    <div className="feedbackinfo">
+                                        <div className="feedbackinfo-id">Feedback #{item.id}</div>
+                                        <p>{item.feedback}</p>
+                                    </div>
                                 </div>
-                            </div>
-                        ))
+                            ))}
+                        </div>
                     )}
                 </main>
-                <Footer />
             </div>
         </AdminGuard>
     );

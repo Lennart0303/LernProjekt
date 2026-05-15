@@ -82,6 +82,17 @@ public class AuthenticationController {
         return ResponseEntity.ok(new AuthResponse(accessToken));
     }
 
+    @PostMapping("/signup")
+    public ResponseEntity<AuthResponse> signup(@Valid @RequestBody AuthRequest req) {
+        if (userRepo.findByUsername(req.username()).isPresent()) {
+            return ResponseEntity.status(409).body(new AuthResponse("Username bereits vergeben"));
+        }
+        String hash = encoder.encode(req.password());
+        User u = new User(0, req.username(), hash, "USER");
+        userRepo.creatUser(u);
+        return ResponseEntity.ok(new AuthResponse("Registrierung erfolgreich"));
+    }
+
     // Login
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest req, HttpServletResponse resp) {

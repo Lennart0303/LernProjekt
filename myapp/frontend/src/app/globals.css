@@ -1,60 +1,320 @@
 @import "tailwindcss";
 
+/* =============================================
+   Design System Variables
+   ============================================= */
+:root {
+  --bg: #000000;
+  --surface: #111111;
+  --surface-raised: #1a1a1a;
+  --primary: #ff6600;
+  --primary-hover: #e55a00;
+  --text: #ffffff;
+  --text-muted: #a0a0a0;
+  --border: rgba(255, 255, 255, 0.08);
+  --radius: 8px;
+  --radius-card: 12px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', Arial, Helvetica, sans-serif;
+  line-height: 1.6;
+}
+
+/* =============================================
+   Skip Link (Accessibility)
+   ============================================= */
 .skip-link {
   position: absolute;
   top: -40px;
   left: 0;
-  background: #ff6600;
+  background: var(--primary);
   color: white;
-  padding: 8px;
+  padding: 8px 16px;
   text-decoration: none;
-  z-index: 100;
+  z-index: 9999;
+  border-radius: 0 0 var(--radius) 0;
+  font-family: 'Inter', sans-serif;
 }
 .skip-link:focus {
   top: 0;
 }
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* =============================================
+   App Shell Layout
+   ============================================= */
+.app-shell {
+  display: flex;
+  min-height: 100vh;
 }
-/* Beispiel: globals.css oder eine eigene CSS-Datei */
-main {
-  margin-left: 220px; /* gleiche Breite wie .navigation */
-  margin-right: 150px;
-  padding: 1rem;      /* optional: Innenabstand */
-  /* … weiterer Stil … */
+
+.app-main {
+  margin-left: 240px;
+  flex: 1;
+  min-height: 100vh;
+  background: var(--bg);
+  padding: 40px;
 }
 
 @media (max-width: 768px) {
-  main {
+  .app-main {
     margin-left: 0;
-    margin-right: 0;
+    padding: 76px 20px 20px; /* 56px topbar + 20px gap */
+  }
+
+  .hero {
+    width: calc(100% + 40px);
+    margin: -76px -20px 32px;
+    padding: 100px 24px 32px;
+    height: auto;
   }
 }
-main ul {
-  margin: 0;
-  padding-left: 1.25rem;  /* Einzug, damit die Punkte nicht in der Sidebar kleben */
-  list-style-type: disc;   /* klassische runde Aufzählungszeichen */
+
+/* =============================================
+   Hero Section
+   ============================================= */
+.hero {
+  width: calc(100% + 80px);
+  height: 280px;
+  background: linear-gradient(135deg, #1a0800 0%, #2d1100 40%, #000 100%);
+  display: flex;
+  align-items: flex-end;
+  padding: 40px;
+  margin: -40px -40px 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 30% 50%, rgba(255, 102, 0, 0.15) 0%, transparent 60%);
+}
+
+.hero h1 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #fff;
+  position: relative;
+  z-index: 1;
+}
+
+.hero p {
+  color: var(--text-muted);
+  position: relative;
+  z-index: 1;
+  margin-top: 8px;
+}
+
+/* =============================================
+   Page Content Utilities
+   ============================================= */
+.page-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.page-subtitle {
+  color: var(--text-muted);
+  margin-bottom: 32px;
+  font-size: 1rem;
+}
+
+/* =============================================
+   Card Component
+   ============================================= */
+.card {
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--border);
+  padding: 24px;
+}
+
+/* =============================================
+   Form Elements (shared)
+   ============================================= */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.form-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--surface);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 1rem;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.15);
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: #555;
+}
+
+/* =============================================
+   Button Variants
+   ============================================= */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: var(--primary);
+  border: none;
+  border-radius: var(--radius);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--primary-hover);
+  box-shadow: 0 0 20px rgba(255, 102, 0, 0.4);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: #c0392b;
+  border: none;
+  border-radius: var(--radius);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: #e74c3c;
+}
+
+.btn-danger:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* =============================================
+   Table Styles (shared)
+   ============================================= */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-bottom: 1px solid var(--border);
+}
+
+.data-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+
+.data-table tr:last-child td {
+  border-bottom: none;
+}
+
+.data-table tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* =============================================
+   Pill / Badge
+   ============================================= */
+.pill {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  background: rgba(255, 102, 0, 0.15);
+  color: var(--primary);
+  border: 1px solid rgba(255, 102, 0, 0.3);
+}
+
+/* =============================================
+   Overrides for list markers (keep old behavior)
+   ============================================= */
+.content-list {
+  padding-left: 1.25rem;
+  list-style-type: disc;
   list-style-position: inside;
 }
 
-/* 2) Orangefarbene Bullets */
-main ul li::marker {
-  color: #ff6600; /* dein Orange-Akzent */
+.content-list li::marker {
+  color: var(--primary);
 }
 
-
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* =============================================
+   Select element styling
+   ============================================= */
+select.form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23a0a0a0' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
 }

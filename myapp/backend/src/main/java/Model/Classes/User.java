@@ -1,5 +1,6 @@
 package Model.Classes;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -8,6 +9,7 @@ public class User {
     @NotBlank
     @Size(min = 3, max = 50)
     private String username;
+    @JsonIgnore
     @NotBlank
     private String passwordHash;
     private String role;

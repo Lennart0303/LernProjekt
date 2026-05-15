@@ -4,11 +4,8 @@ import toast from "react-hot-toast";
 
 import Navigation from "@/components/Navigation/page";
 import { useAuth } from "@/components/context/AuthContext";
-import Header from "@/components/Header/page";
-import Footer from "@/components/Footer/page";
 import { handleAuthError } from "@/components/utils/page";
 import { AdminGuard } from "@/components/context/AdminGuard";
-import "../feedback/feedback.css";
 
 export default function Register() {
     const { accessToken, login, logout } = useAuth();
@@ -19,6 +16,19 @@ export default function Register() {
         e.preventDefault();
 
         if (!accessToken) return;
+
+        if (username.length < 4 || username.length > 50) {
+            toast.error("Benutzername muss 4–50 Zeichen lang sein.");
+            return;
+        }
+        if (password.length < 8) {
+            toast.error("Passwort muss mindestens 8 Zeichen lang sein.");
+            return;
+        }
+        if (!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password)) {
+            toast.error("Passwort muss Groß- und Kleinbuchstaben sowie eine Ziffer enthalten.");
+            return;
+        }
 
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/register`, {
             method: "POST",
@@ -56,42 +66,61 @@ export default function Register() {
 
     return (
         <AdminGuard>
-            <div>
-                <Header />
+            <div className="app-shell">
                 <Navigation />
-                <main id="main-content">
-                    <section className="feedback-section">
-                        <h2 className="feedback-title">Neuen Benutzer registrieren</h2>
-                        <p className="feedback-text">
-                            Erstelle hier einen neuen Benutzeraccount. Bitte beachte die folgenden Anforderungen:
-                            Username 4–50 Zeichen, Passwort mindestens 8 Zeichen mit Groß- und Kleinbuchstaben sowie Ziffern.
-                        </p>
-                        <form className="feedback-form" onSubmit={handleSubmit}>
-                            <label htmlFor="register-username" className="feedback-label">Benutzername:</label>
-                            <input
-                                id="register-username"
-                                type="text"
-                                value={username}
-                                onChange={e => setUsername(e.target.value)}
-                                placeholder="Benutzername (4–50 Zeichen)"
-                                required
-                                className="feedback-input"
-                            />
-                            <label htmlFor="register-password" className="feedback-label">Passwort:</label>
-                            <input
-                                id="register-password"
-                                type="password"
-                                value={password}
-                                onChange={e => setPassword(e.target.value)}
-                                placeholder="Mindestens 8 Zeichen, Groß-/Kleinbuchstaben, Ziffern"
-                                required
-                                className="feedback-input"
-                            />
-                            <button type="submit" className="feedback-button">Registrieren</button>
-                        </form>
-                    </section>
+                <main id="main-content" className="app-main">
+                    {/* Hero */}
+                    <div className="hero">
+                        <div>
+                            <h1>Neuen Benutzer registrieren</h1>
+                            <p>Erstelle einen neuen Account für die Anwendung.</p>
+                        </div>
+                    </div>
+
+                    <div style={{ maxWidth: '520px' }}>
+                        <div className="card">
+                            <p style={{ color: '#a0a0a0', fontSize: '0.9rem', marginBottom: '24px', lineHeight: '1.6' }}>
+                                Benutzername: 4–50 Zeichen. Passwort: mind. 8 Zeichen mit Groß-, Kleinbuchstaben und Ziffer.
+                            </p>
+
+                            <form onSubmit={handleSubmit} noValidate style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                                <div className="form-group" style={{ marginBottom: 0 }}>
+                                    <label htmlFor="register-username" className="form-label">
+                                        Benutzername
+                                    </label>
+                                    <input
+                                        id="register-username"
+                                        type="text"
+                                        value={username}
+                                        onChange={e => setUsername(e.target.value)}
+                                        placeholder="Benutzername (4–50 Zeichen)"
+                                        required
+                                        className="form-input"
+                                    />
+                                </div>
+                                <div className="form-group" style={{ marginBottom: 0 }}>
+                                    <label htmlFor="register-password" className="form-label">
+                                        Passwort
+                                    </label>
+                                    <input
+                                        id="register-password"
+                                        type="password"
+                                        value={password}
+                                        onChange={e => setPassword(e.target.value)}
+                                        placeholder="Mindestens 8 Zeichen, Groß-/Kleinbuchstaben, Ziffern"
+                                        required
+                                        className="form-input"
+                                    />
+                                </div>
+
+                                <button type="submit" className="btn-primary">
+                                    <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>person_add</span>
+                                    Benutzer registrieren
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </main>
-                <Footer />
             </div>
         </AdminGuard>
     );

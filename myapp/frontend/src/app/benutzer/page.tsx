@@ -4,8 +4,6 @@ import toast from "react-hot-toast";
 import { jwtDecode } from "jwt-decode";
 
 import Navigation from "@/components/Navigation/page";
-import Header from "@/components/Header/page";
-import Footer from "@/components/Footer/page";
 import { useAuth } from "@/components/context/AuthContext";
 import { handleAuthError } from "@/components/utils/page";
 import { AdminGuard } from "@/components/context/AdminGuard";
@@ -50,6 +48,7 @@ export default function BenutzerVerwalten() {
 
     const handleDelete = async (user: User) => {
         if (!accessToken) return;
+        if (!window.confirm(`Benutzer "${user.username}" wirklich löschen?`)) return;
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${user.id}`, {
             method: "DELETE",
             credentials: "include",
@@ -84,55 +83,62 @@ export default function BenutzerVerwalten() {
 
     return (
         <AdminGuard>
-            <div>
-                <Header />
+            <div className="app-shell">
                 <Navigation />
-                <main id="main-content" className="benutzer-page">
-                    <h2 className="benutzer-title">Benutzerverwaltung</h2>
-                    <table className="benutzer-table">
-                        <thead>
-                            <tr>
-                                <th>Benutzername</th>
-                                <th>Rolle</th>
-                                <th>Aktionen</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {users.map(user => {
-                                const isSelf = user.username === currentUsername;
-                                return (
-                                    <tr key={user.id}>
-                                        <td>
-                                            {user.username}
-                                            {isSelf && <span className="self-badge">(Du)</span>}
-                                        </td>
-                                        <td>
-                                            <select
-                                                value={user.role}
-                                                disabled={isSelf}
-                                                onChange={e => handleRoleChange(user, e.target.value)}
-                                                className="role-select"
-                                            >
-                                                <option value="USER">USER</option>
-                                                <option value="ADMIN">ADMIN</option>
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <button
-                                                onClick={() => handleDelete(user)}
-                                                disabled={isSelf}
-                                                className="delete-button"
-                                            >
-                                                Löschen
-                                            </button>
-                                        </td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
+                <main id="main-content" className="app-main">
+                    {/* Hero */}
+                    <div className="hero">
+                        <div>
+                            <h1>Benutzerverwaltung</h1>
+                            <p>Verwalte Rollen und Accounts aller Benutzer.</p>
+                        </div>
+                    </div>
+
+                    <div className="benutzer-table-wrapper">
+                        <table className="benutzer-table">
+                            <thead>
+                                <tr>
+                                    <th>Benutzername</th>
+                                    <th>Rolle</th>
+                                    <th>Aktionen</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {users.map(user => {
+                                    const isSelf = user.username === currentUsername;
+                                    return (
+                                        <tr key={user.id}>
+                                            <td>
+                                                {user.username}
+                                                {isSelf && <span className="self-badge">Du</span>}
+                                            </td>
+                                            <td>
+                                                <select
+                                                    value={user.role}
+                                                    disabled={isSelf}
+                                                    onChange={e => handleRoleChange(user, e.target.value)}
+                                                    className="role-select"
+                                                >
+                                                    <option value="USER">USER</option>
+                                                    <option value="ADMIN">ADMIN</option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <button
+                                                    onClick={() => handleDelete(user)}
+                                                    disabled={isSelf}
+                                                    className="delete-button"
+                                                >
+                                                    Löschen
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
                 </main>
-                <Footer />
             </div>
         </AdminGuard>
     );

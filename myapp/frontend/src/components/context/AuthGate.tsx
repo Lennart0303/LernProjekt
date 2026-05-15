@@ -1,9 +1,12 @@
 "use client";
 
 import React from "react";
+import { usePathname } from "next/navigation";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider, useAuth } from "@/components/context/AuthContext";
 import LoginForm from "@/components/Login/page"; // oder Login/page, je nach Pfad
+
+const PUBLIC_ROUTES = ["/signup", "/impressum", "/datenschutz"];
 
 export default function AuthGate({ children }: { children: React.ReactNode }) {
   return (
@@ -32,6 +35,13 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
 
 function InnerGate({ children }: { children: React.ReactNode }) {
   const { accessToken } = useAuth();
+  const pathname = usePathname();
+
+  // Öffentliche Routen brauchen keinen Login
+  if (PUBLIC_ROUTES.includes(pathname)) {
+    return <>{children}</>;
+  }
+
   // Wenn kein Token, zeige Login, sonst den Content
   return accessToken ? <>{children}</> : <LoginForm />;
 }

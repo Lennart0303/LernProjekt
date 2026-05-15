@@ -11,7 +11,7 @@ public class Meal {
     private String name;
 
     @NotBlank(message = "Beschreibung darf nicht leer sein")
-    @Size(min = 5, max = 500, message = "Beschreibung muss 5–500 Zeichen lang sein")
+    @Size(min = 5, max = 1500, message = "Beschreibung muss 5–1500 Zeichen lang sein")
     private String description;
 
     @Min(value = 1, message = "Kalorien müssen mindestens 1 sein")

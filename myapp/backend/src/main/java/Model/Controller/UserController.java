@@ -1,6 +1,7 @@
 package Model.Controller;
 
 import Model.Classes.User;
+import Model.Database.MealRepository;
 import Model.Database.UserRespository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,11 +16,30 @@ import java.util.Set;
 public class UserController {
 
     private final UserRespository repo;
+    private final MealRepository mealRepo;
 
     record RoleUpdateRequest(String role) {}
+    record UserProfileResponse(String username, int mealCount) {}
 
-    public UserController(UserRespository repo) {
+    public UserController(UserRespository repo, MealRepository mealRepo) {
         this.repo = repo;
+        this.mealRepo = mealRepo;
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/me")
+    public ResponseEntity<UserProfileResponse> getOwnProfile(Principal principal) {
+        User user = repo.findByUsername(principal.getName()).orElseThrow();
+        int mealCount = mealRepo.countMealsByUserId(user.getId());
+        return ResponseEntity.ok(new UserProfileResponse(user.getUsername(), mealCount));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @DeleteMapping("/me")
+    public ResponseEntity<Void> deleteOwnAccount(Principal principal) {
+        User user = repo.findByUsername(principal.getName()).orElseThrow();
+        repo.deleteUser(user.getId());
+        return ResponseEntity.noContent().build();
     }
 
     @PreAuthorize("hasRole('ADMIN')")

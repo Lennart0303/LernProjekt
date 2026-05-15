@@ -1,23 +1,13 @@
 // src/app/layout.tsx
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-// Direkt importieren – es ist eine Client‑Komponente, markiert mit "use client"
 import AuthGate from "@/components/context/AuthGate";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import CookieConsent from "@/components/CookieConsent/CookieConsent";
 
 export const metadata: Metadata = {
-  title: "Meine App",
-  description: "Login-geschützte Webanwendung",
+  title: "Dreh & Schmatz",
+  description: "Entdecke deine nächste Lieblingsmahlzeit",
 };
 
 type RootLayoutProps = {
@@ -28,13 +18,25 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="de">
       <head>
-        <title>Was Essen?</title>
+        <title>Dreh & Schmatz</title>
+        {/* Google Fonts: Montserrat + Inter */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+        />
+        {/* Material Symbols Outlined */}
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+        />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body>
         <a href="#main-content" className="skip-link">
           Zum Inhalt springen
         </a>
-        {/* AuthGate ist eine Client‑Komponente (mit "use client") */}
+        <CookieConsent />
         <AuthGate>{children}</AuthGate>
       </body>
     </html>

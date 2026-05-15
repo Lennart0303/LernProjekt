@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { useAuth } from "@/components/context/AuthContext";
-import Header from "@/components/Header/page";
 import Navigation from "@/components/Navigation/page";
 import { handleAuthError } from "@/components/utils/page";
 import "./create_Meal.css";
@@ -46,9 +45,7 @@ export default function CreateMealPage() {
             })
         }).then((res) =>
             handleAuthError(res, login, logout).then((aborted) => {
-                if (aborted) {
-                    return Promise.reject("Auth-Abbruch");
-                }
+                if (aborted) return Promise.reject("Auth-Abbruch");
 
                 if (res.status === 400) {
                     return res.json().then((errors: Record<string, string>) => {
@@ -69,58 +66,84 @@ export default function CreateMealPage() {
                 return res.json();
             })
         ).catch(error => {
-            console.error("Fehler:", error.message);
+            if (error !== "Auth-Abbruch" && error !== "Validation-Error" && error !== "API-Fehler") {
+                console.error("Fehler:", error);
+            }
         }).finally(() => {
             setIsLoading(false);
         });
     };
 
     return (
-        <>
-            <Header />
+        <div className="app-shell">
             <Navigation />
+            <main id="main-content" className="app-main">
+                {/* Hero */}
+                <div className="hero" style={{ background: "linear-gradient(135deg, rgba(20,5,0,0.60) 0%, rgba(40,12,0,0.48) 40%, rgba(0,0,0,0.35) 100%), url('/essensrad/bilder/gericht_erstellen.png') center / cover no-repeat" }}>
+                    <div>
+                        <h1>Gericht erstellen</h1>
+                        <p>Füge ein neues Gericht zur Sammlung hinzu.</p>
+                    </div>
+                </div>
 
-            <main id="main-content" className="create-meal-page">
-                <h1>Neues Gericht erstellen</h1>
-                <form onSubmit={handleSubmit} className="meal-form">
-                    <label>
-                        Titel:
-                        <input
-                            type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            placeholder="z. B. Spaghetti Bolognese"
-                            required
-                        />
-                    </label>
+                <div className="create-meal-form-wrapper">
+                    <form onSubmit={handleSubmit} noValidate>
+                        <div className="form-group">
+                            <label htmlFor="meal-name" className="form-label">
+                                Titel
+                            </label>
+                            <input
+                                id="meal-name"
+                                type="text"
+                                className="form-input"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                placeholder="z. B. Spaghetti Bolognese"
+                                required
+                            />
+                        </div>
 
-                    <label>
-                        Beschreibung:
-                        <textarea
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            placeholder="Was macht das Gericht aus?"
-                            required
-                        />
-                    </label>
+                        <div className="form-group">
+                            <label htmlFor="meal-desc" className="form-label">
+                                Beschreibung & Zubereitung
+                            </label>
+                            <textarea
+                                id="meal-desc"
+                                className="form-textarea"
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                placeholder="Zutaten, Zubereitung, Besonderheiten… Alles hier eintragen."
+                                maxLength={1500}
+                                required
+                            />
+                            <span style={{ fontSize: '0.75rem', color: description.length > 1300 ? '#ff6600' : '#555', textAlign: 'right' }}>
+                                {description.length} / 1500
+                            </span>
+                        </div>
 
-                    <label>
-                        Kalorien:
-                        <input
-                            type="number"
-                            min={1}
-                            placeholder="Kalorien (min. 1)"
-                            value={calories}
-                            onChange={e => setCalories(e.target.value === "" ? "" : Number(e.target.value))}
-                            required
-                        />
-                    </label>
+                        <div className="form-group">
+                            <label htmlFor="meal-calories" className="form-label">
+                                Kalorien (kcal)
+                            </label>
+                            <input
+                                id="meal-calories"
+                                type="number"
+                                className="form-input"
+                                min={1}
+                                placeholder="z. B. 650"
+                                value={calories}
+                                onChange={e => setCalories(e.target.value === "" ? "" : Number(e.target.value))}
+                                required
+                            />
+                        </div>
 
-                    <button type="submit" disabled={isLoading}>
-                        {isLoading ? "Wird erstellt..." : "Gericht erstellen"}
-                    </button>
-                </form>
+                        <button type="submit" className="btn-primary" disabled={isLoading}>
+                            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>add_circle</span>
+                            {isLoading ? "Wird erstellt..." : "Gericht erstellen"}
+                        </button>
+                    </form>
+                </div>
             </main>
-        </>
+        </div>
     );
 }

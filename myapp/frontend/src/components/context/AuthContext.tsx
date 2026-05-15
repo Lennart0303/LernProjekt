@@ -33,11 +33,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setRole(getRoleFromToken(token));
   }, []);
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
     setAccessToken(null);
     setRole(null);
-    // Cookie löschen lassen
-    fetch("/api/auth/logout", { method: "POST", credentials: "include" });
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/logout`, {
+      method: "POST",
+      credentials: "include"
+    });
   }, []);
 
   // in AuthContext.tsx
