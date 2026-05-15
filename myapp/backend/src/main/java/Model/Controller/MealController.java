@@ -55,23 +55,18 @@ public class MealController {
     @GetMapping("/{id}")
     public ResponseEntity<Meal> getMealByID(@PathVariable int id) {
         Meal meal = mealRepository.getMealByID(id);
-        if (meal == null) {
-            return ResponseEntity.status(500).body(null);
-        } else {
-            return ResponseEntity.ok(meal);
+        if (meal == null || meal.getUserId() != getCurrentUserId()) {
+            return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.ok(meal);
     }
 
     @PreAuthorize("hasRole('USER')  or hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<Meal> createMeal(@Valid @RequestBody Meal meal) {
         meal.setUserId(getCurrentUserId());
-        int success = mealRepository.createMeal(meal);
-        if (success > 0) {
-            return ResponseEntity.ok(meal);
-        } else {
-            return ResponseEntity.status(500).body(null);
-        }
+        mealRepository.createMeal(meal);
+        return ResponseEntity.ok(meal);
     }
 
 }

@@ -1,0 +1,55 @@
+spring:
+  datasource:
+    url: jdbc:sqlite::memory:
+    driver-class-name: org.sqlite.JDBC
+    hikari:
+      connection-init-sql: "PRAGMA foreign_keys = ON"
+      # SQLite In-Memory braucht eine einzige persistente Connection,
+      # sonst verliert jede neue Connection die Daten
+      maximum-pool-size: 1
+      minimum-idle: 1
+
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+
+  jpa:
+    show-sql: false
+
+  # Cache muss aktiv bleiben (Bucket4j braucht ihn), aber wir
+  # deaktivieren Bucket4j selbst für isolierte Tests
+  cache:
+    type: jcache
+    jcache:
+      provider: com.github.benmanes.caffeine.jcache.spi.CaffeineCachingProvider
+    cache-names:
+      - bucket4j-login-cache
+
+cors:
+  allowed-origins: http://localhost:3000
+
+server:
+  port: 0
+
+jwt:
+  # Base64 von "testSecretKeyForIntegrationTests1234" (>= 256 bit)
+  secret: dGVzdFNlY3JldEtleUZvckludGVncmF0aW9uVGVzdHMxMjM0
+
+logging:
+  level:
+    org.springframework.security: WARN
+    org.springframework.web: WARN
+
+# Bucket4j komplett deaktivieren — Rate-Limit wird separat getestet
+bucket4j:
+  enabled: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never

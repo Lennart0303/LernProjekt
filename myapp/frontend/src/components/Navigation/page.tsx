@@ -7,7 +7,7 @@ import { useAuth } from "@/components/context/AuthContext";
 
 export default function Navigation() {
   const pathname = usePathname();
-  const { role } = useAuth();
+  const { role, logout } = useAuth();
 
   const navItems = [
     { label: 'Startseite', href: '/' },
@@ -43,6 +43,11 @@ export default function Navigation() {
             </Link>
           </li>
         ))}
+        <li>
+          <button onClick={logout} className="logout-button">
+            Abmelden
+          </button>
+        </li>
       </ul>
     </nav>
   );

@@ -36,7 +36,7 @@ public class FeedbackController {
         if (success > 0) {
             return ResponseEntity.ok(feedback);
         } else {
-            return ResponseEntity.status(500).body(null);
+            throw new RuntimeException("Feedback konnte nicht gespeichert werden");
         }
     }
 

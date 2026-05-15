@@ -1,5 +1,7 @@
 package Model.Database;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import Model.Classes.Meal;
@@ -7,6 +9,7 @@ import java.util.List;
 
 @Repository
 public class MealRepository {
+    private static final Logger log = LoggerFactory.getLogger(MealRepository.class);
     private final JdbcTemplate jbdc;
 
     public MealRepository(JdbcTemplate template) {
@@ -24,7 +27,7 @@ public class MealRepository {
                             rs.getInt("user_id")),
                     userId);
         } catch (Exception e) {
-            System.out.println("Error while fetching meals: " + e.getMessage());
+            log.error("Error while fetching meals", e);
             return List.of();
         }
     }
@@ -33,7 +36,7 @@ public class MealRepository {
         if (query == null || query.isEmpty()) {
             return getAllMeals(userId);
         }
-        String wildcad = "%" + query.trim() + "%";
+        String wildcard = "%" + query.trim() + "%";
         try {
             return jbdc.query("SELECT * FROM MEAL WHERE mealName LIKE ? AND user_id = ?",
                     (rs, rowNum) -> new Meal(
@@ -42,9 +45,9 @@ public class MealRepository {
                             rs.getString("mealDescription"),
                             rs.getInt("calories"),
                             rs.getInt("user_id")),
-                    wildcad, userId);
+                    wildcard, userId);
         } catch (Exception e) {
-            System.out.println("Error while fetching meals: " + e.getMessage());
+            log.error("Error while fetching meals by name", e);
             return List.of();
         }
     }
@@ -60,7 +63,7 @@ public class MealRepository {
                             rs.getInt("user_id")),
                     id);
         } catch (Exception e) {
-            System.out.println("Error while fetching meal by ID: " + e.getMessage());
+            log.error("Error while fetching meal by ID", e);
             return null;
         }
     }
@@ -73,7 +76,7 @@ public class MealRepository {
                     meal.getCalories(),
                     meal.getUserId());
         } catch (Exception e) {
-            System.out.println("Error while creating meal: " + e.getMessage());
+            log.error("Error while creating meal", e);
             return 0;
         }
     }

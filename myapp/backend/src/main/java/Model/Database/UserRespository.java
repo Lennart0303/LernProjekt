@@ -1,6 +1,8 @@
 package Model.Database;
 
 import Model.Classes.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -10,6 +12,7 @@ import java.util.Optional;
 @Repository
 
 public class UserRespository {
+    private static final Logger log = LoggerFactory.getLogger(UserRespository.class);
     private final JdbcTemplate jdbc;
 
     public UserRespository(JdbcTemplate jbdc) {
@@ -27,7 +30,7 @@ public class UserRespository {
                         return user;
                     });
         } catch (Exception e) {
-            System.out.println("Error while fetching User: " + e.getMessage());
+            log.error("Error while fetching users", e);
             return List.of(); // Return an empty list in case of error
         }
     }

@@ -7,6 +7,7 @@ import Header from "@/components/Header/page";
 import { useAuth } from "@/components/context/AuthContext";
 import Footer from "@/components/Footer/page";
 import { handleAuthError } from "@/components/utils/page";
+import { AdminGuard } from "@/components/context/AdminGuard";
 import "./einsehen.css";
 
 
@@ -15,7 +16,7 @@ interface Feedback {
     feedback: string;
 }
 
-export default function feedback() {
+export default function FeedbackEinsehen() {
     const { accessToken, login, logout } = useAuth();
     const [feedback, setFeedback] = useState<Feedback[]>([])
 
@@ -54,24 +55,26 @@ export default function feedback() {
     }, [accessToken, login, logout]);
 
     return (
-        <div>
-            <Header />
-            <Navigation />
-            <main className="feedbackPage">
-                {feedback.length === 0 ? (
-                    <p>Keine Feedbacks vorhanden.</p>
-                ) : (
-                    feedback.map((feedback, index) => (
-                        <div key={index} className="feedbackcard">
-                            <div className="feedbackinfo">
-                                <h1>{feedback.id}</h1>
-                                <p>{feedback.feedback}</p>
+        <AdminGuard>
+            <div>
+                <Header />
+                <Navigation />
+                <main id="main-content" className="feedbackPage">
+                    {feedback.length === 0 ? (
+                        <p>Keine Feedbacks vorhanden.</p>
+                    ) : (
+                        feedback.map((feedback, index) => (
+                            <div key={index} className="feedbackcard">
+                                <div className="feedbackinfo">
+                                    <h1>{feedback.id}</h1>
+                                    <p>{feedback.feedback}</p>
+                                </div>
                             </div>
-                        </div>
-                    ))
-                )}
-            </main>
-            <Footer />
-        </div>
+                        ))
+                    )}
+                </main>
+                <Footer />
+            </div>
+        </AdminGuard>
     );
 }

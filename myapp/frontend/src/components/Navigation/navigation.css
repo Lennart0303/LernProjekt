@@ -51,7 +51,27 @@
   color: #ffffff;                   /* Weißer Text auf dem orangen Kasten */
 }
 
-/* 7) Responsive Fallback (optional) */
+/* 7) Logout-Button */
+.logout-button {
+  display: block;
+  background: none;
+  border: none;
+  color: #e0e0e0;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  width: 100%;
+  text-align: left;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.logout-button:hover {
+  background-color: #333;
+  color: #ffffff;
+}
+
+/* 8) Responsive Fallback (optional) */
 /*    Wenn das Viewport sehr schmal wird, schiebt Sidebar sich nach oben */
 @media screen and (max-width: 600px) {
   .navigation {

@@ -1,5 +1,7 @@
 package Model.Database;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import Model.Classes.Feedback;
@@ -8,6 +10,7 @@ import java.util.List;
 
 @Repository
 public class FeedbackRepository {
+    private static final Logger log = LoggerFactory.getLogger(FeedbackRepository.class);
     private final JdbcTemplate jbdc;
 
     public FeedbackRepository(JdbcTemplate jbdc) {
@@ -16,7 +19,7 @@ public class FeedbackRepository {
 
     public List<Feedback> getFeedback() {
         try {
-            return jbdc.query("SELECT * FROM FEEDBACK",
+            return jbdc.query("SELECT id, feedback FROM FEEDBACK",
                     (rs, rowNum) -> {
                         Feedback result = new Feedback(
                                 rs.getInt("id"),
@@ -24,7 +27,7 @@ public class FeedbackRepository {
                         return result;
                     });
         } catch (Exception e) {
-            System.out.println("Error while fetching meals: " + e.getMessage());
+            log.error("Error while fetching feedback", e);
             return List.of(); // Return an empty list in case of error
         }
     }
@@ -34,7 +37,7 @@ public class FeedbackRepository {
             return jbdc.update("INSERT INTO Feedback (feedback) VALUES(?)",
                     feedback.getFeedback());
         } catch (Exception e) {
-            System.out.println("Error while creating meal: " + e.getMessage());
+            log.error("Error while creating feedback", e);
             return 0; // Return 0 in case of error
         }
     }

@@ -7,8 +7,7 @@ WORKDIR /app
 COPY pom.xml .
 COPY src ./src
 
-# Jar bauen  Tests überspringen wir im Docker Build
-RUN mvn clean package -DskipTests
+RUN mvn clean package
 
 # 2. Runtime Stage  schlankes Image nur mit JDK und Jar
 FROM eclipse-temurin:21-jre

@@ -81,7 +81,7 @@ export default function WheelPage() {
         <div>
             <Header />
             <Navigation />
-            <main className="mealpage">
+            <main id="main-content" className="mealpage">
                 <div className="search-container">
                     <input
                         type="text"

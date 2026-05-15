@@ -83,3 +83,4 @@ myapp/backend/!**/src/test/**/build/
 
 ### VS Code ###
 .vscode/settings.json
+.claude/settings.json

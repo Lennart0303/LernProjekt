@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #ff6600;
+  color: white;
+  padding: 8px;
+  text-decoration: none;
+  z-index: 100;
+}
+.skip-link:focus {
+  top: 0;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -10,7 +24,14 @@ main {
   margin-right: 150px;
   padding: 1rem;      /* optional: Innenabstand */
   /* … weiterer Stil … */
-} 
+}
+
+@media (max-width: 768px) {
+  main {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
 main ul {
   margin: 0;
   padding-left: 1.25rem;  /* Einzug, damit die Punkte nicht in der Sidebar kleben */

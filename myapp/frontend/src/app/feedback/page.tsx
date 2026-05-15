@@ -9,14 +9,17 @@ import Footer from "@/components/Footer/page";
 import { handleAuthError } from "@/components/utils/page";
 import "./feedback.css";
 
-export default function feedback() {
+export default function FeedbackPage() {
     const { accessToken, login, logout } = useAuth();
     const [neuesFeedback, setNeuesFeedback] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
         if (!accessToken) return;
+
+        setIsLoading(true);
 
         fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/feedback`, {
             method: "POST",
@@ -51,6 +54,8 @@ export default function feedback() {
             })
         ).catch(error => {
             console.error("Fehler:", error.message);
+        }).finally(() => {
+            setIsLoading(false);
         });
     }
 
@@ -58,7 +63,7 @@ export default function feedback() {
         <div>
             <Header />
             <Navigation />
-            <main>
+            <main id="main-content">
                 <section className="feedback-section">
                     <h2 className="feedback-title">Dein Feedback &amp; Deine Ideen</h2>
                     <p className="feedback-text">
@@ -77,7 +82,9 @@ export default function feedback() {
                             className="feedback-input"
                             onChange={e => setNeuesFeedback(e.target.value)}
                         ></textarea>
-                        <button type="button" onClick={handleSubmit} className="feedback-button">Absenden</button>
+                        <button type="button" onClick={handleSubmit} disabled={isLoading} className="feedback-button">
+                            {isLoading ? "Wird gesendet..." : "Feedback senden"}
+                        </button>
                     </form>
                 </section>
             </main>

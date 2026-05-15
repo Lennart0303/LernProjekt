@@ -10,7 +10,7 @@ export default function Home() {
     <div >
       <Header />
       <Navigation />
-      <main>
+      <main id="main-content">
         <section>
           <h2>Worum geht es hier?</h2>
           <p>

@@ -31,6 +31,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <title>Was Essen?</title>
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <a href="#main-content" className="skip-link">
+          Zum Inhalt springen
+        </a>
         {/* AuthGate ist eine Client‑Komponente (mit "use client") */}
         <AuthGate>{children}</AuthGate>
       </body>

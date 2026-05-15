@@ -78,6 +78,7 @@ public class SecurityConfig {
                                 .sessionManagement(sm -> sm
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                                 .authorizeHttpRequests(auth -> auth
+                                                .requestMatchers("/actuator/health").permitAll()
                                                 // öffentlich: Login/Register
                                                 .requestMatchers("/api/auth/**").permitAll()
                                                 // nur Admins: z.B. Nutzerverwaltung
@@ -124,7 +125,7 @@ public class SecurityConfig {
                 CorsConfiguration config = new CorsConfiguration();
                 config.setAllowedOrigins(List.of(corsAllowedOrigin));
                 config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-                config.setAllowedHeaders(List.of("*"));
+                config.setAllowedHeaders(List.of("Content-Type", "Authorization", "Accept"));
                 config.setAllowCredentials(true);
                 config.setExposedHeaders(List.of("Retry-After", "X-Rate-Limit-Remaining"));
 

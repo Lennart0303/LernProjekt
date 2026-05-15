@@ -11,6 +11,8 @@ spring:
   datasource:
     url: jdbc:sqlite:/app/data/app.db
     driver-class-name: org.sqlite.JDBC
+    hikari:
+      connection-init-sql: "PRAGMA foreign_keys = ON"
 
   sql:
     init:
@@ -50,3 +52,12 @@ bucket4j:
               time: 1                 # Intervall-Länge
               unit: minutes           # Einheit (seconds, minutes, hours …) :contentReference[oaicite:0]{index=0}
               refill-speed: interval  # Nachfüll-Verhalten: interval oder greedy :contentReference[oaicite:1]{index=1}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never

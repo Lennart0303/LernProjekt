@@ -4,6 +4,7 @@
 import React, {
   createContext, useContext, useState, ReactNode, useCallback, useEffect
 } from "react";
+import { jwtDecode } from "jwt-decode";
 
 interface AuthContextType {
   accessToken: string | null;
@@ -14,7 +15,7 @@ interface AuthContextType {
 
 function getRoleFromToken(token: string): string | null {
   try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
+    const payload = jwtDecode<{ roles: string[] }>(token);
     return payload.roles?.[0] ?? null;
   } catch {
     return null;
@@ -73,8 +74,3 @@ export function useAuth() {
   return ctx;
 }
 
-export function getAccessToken() {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("getAccessToken must be inside AuthProvider");
-  return ctx.accessToken;
-}

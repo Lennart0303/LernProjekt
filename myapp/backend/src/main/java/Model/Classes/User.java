@@ -1,8 +1,14 @@
 package Model.Classes;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 public class User {
     private int id;
+    @NotBlank
+    @Size(min = 3, max = 50)
     private String username;
+    @NotBlank
     private String passwordHash;
     private String role;
 

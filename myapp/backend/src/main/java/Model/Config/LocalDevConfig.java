@@ -18,7 +18,7 @@ public class LocalDevConfig {
             if (repo.findByUsername("admin").isEmpty()) {
                 String hash = encoder.encode("Admin123");
                 repo.creatUser(new User("admin", hash, "ADMIN"));
-                System.out.println("[DEV] Admin-User angelegt: admin / Admin123");
+                System.out.println("[DEV] Admin-User angelegt. Benutzername: admin");
             }
         };
     }

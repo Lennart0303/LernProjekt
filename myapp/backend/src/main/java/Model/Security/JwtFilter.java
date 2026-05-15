@@ -34,6 +34,10 @@ public class JwtFilter extends OncePerRequestFilter {
             String token = header.substring(7);
             try {
                 Claims claims = jwtUtil.validate(token);
+                if (claims == null) {
+                    chain.doFilter(req, res);
+                    return;
+                }
                 String user = claims.getSubject();
                 @SuppressWarnings("unchecked")
                 List<String> roles = claims.get("roles", List.class);

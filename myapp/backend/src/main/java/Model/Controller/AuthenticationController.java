@@ -126,4 +126,17 @@ public class AuthenticationController {
 
         return ResponseEntity.ok(new AuthResponse(accessToken));
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpServletResponse resp) {
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("Strict")
+                .path("/api/auth/refresh")
+                .maxAge(0)
+                .build();
+        resp.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        return ResponseEntity.ok().build();
+    }
 }

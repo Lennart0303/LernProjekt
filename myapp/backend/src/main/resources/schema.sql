@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS MEAL (
     mealDescription TEXT,
     calories INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS users (

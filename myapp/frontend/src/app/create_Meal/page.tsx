@@ -13,6 +13,7 @@ export default function CreateMealPage() {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [calories, setCalories] = useState<number | "">("");
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -28,6 +29,8 @@ export default function CreateMealPage() {
         }
 
         if (!accessToken) return;
+
+        setIsLoading(true);
 
         fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/meal`, {
             method: "POST",
@@ -67,6 +70,8 @@ export default function CreateMealPage() {
             })
         ).catch(error => {
             console.error("Fehler:", error.message);
+        }).finally(() => {
+            setIsLoading(false);
         });
     };
 
@@ -75,7 +80,7 @@ export default function CreateMealPage() {
             <Header />
             <Navigation />
 
-            <main className="create-meal-page">
+            <main id="main-content" className="create-meal-page">
                 <h1>Neues Gericht erstellen</h1>
                 <form onSubmit={handleSubmit} className="meal-form">
                     <label>
@@ -111,7 +116,9 @@ export default function CreateMealPage() {
                         />
                     </label>
 
-                    <button type="submit">Gericht speichern</button>
+                    <button type="submit" disabled={isLoading}>
+                        {isLoading ? "Wird erstellt..." : "Gericht erstellen"}
+                    </button>
                 </form>
             </main>
         </>

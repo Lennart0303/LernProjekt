@@ -1,12 +1,14 @@
 "use client"
 import React, { useState, useEffect, useCallback } from "react";
 import toast from "react-hot-toast";
+import { jwtDecode } from "jwt-decode";
 
 import Navigation from "@/components/Navigation/page";
 import Header from "@/components/Header/page";
 import Footer from "@/components/Footer/page";
 import { useAuth } from "@/components/context/AuthContext";
 import { handleAuthError } from "@/components/utils/page";
+import { AdminGuard } from "@/components/context/AdminGuard";
 import "./benutzer.css";
 
 interface User {
@@ -18,8 +20,7 @@ interface User {
 function getUsernameFromToken(token: string | null): string | null {
     if (!token) return null;
     try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        return payload.sub ?? null;
+        return jwtDecode<{ sub: string }>(token).sub ?? null;
     } catch { return null; }
 }
 
@@ -82,55 +83,57 @@ export default function BenutzerVerwalten() {
     };
 
     return (
-        <div>
-            <Header />
-            <Navigation />
-            <main className="benutzer-page">
-                <h2 className="benutzer-title">Benutzerverwaltung</h2>
-                <table className="benutzer-table">
-                    <thead>
-                        <tr>
-                            <th>Benutzername</th>
-                            <th>Rolle</th>
-                            <th>Aktionen</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {users.map(user => {
-                            const isSelf = user.username === currentUsername;
-                            return (
-                                <tr key={user.id}>
-                                    <td>
-                                        {user.username}
-                                        {isSelf && <span className="self-badge">(Du)</span>}
-                                    </td>
-                                    <td>
-                                        <select
-                                            value={user.role}
-                                            disabled={isSelf}
-                                            onChange={e => handleRoleChange(user, e.target.value)}
-                                            className="role-select"
-                                        >
-                                            <option value="USER">USER</option>
-                                            <option value="ADMIN">ADMIN</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <button
-                                            onClick={() => handleDelete(user)}
-                                            disabled={isSelf}
-                                            className="delete-button"
-                                        >
-                                            Löschen
-                                        </button>
-                                    </td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
-            </main>
-            <Footer />
-        </div>
+        <AdminGuard>
+            <div>
+                <Header />
+                <Navigation />
+                <main id="main-content" className="benutzer-page">
+                    <h2 className="benutzer-title">Benutzerverwaltung</h2>
+                    <table className="benutzer-table">
+                        <thead>
+                            <tr>
+                                <th>Benutzername</th>
+                                <th>Rolle</th>
+                                <th>Aktionen</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {users.map(user => {
+                                const isSelf = user.username === currentUsername;
+                                return (
+                                    <tr key={user.id}>
+                                        <td>
+                                            {user.username}
+                                            {isSelf && <span className="self-badge">(Du)</span>}
+                                        </td>
+                                        <td>
+                                            <select
+                                                value={user.role}
+                                                disabled={isSelf}
+                                                onChange={e => handleRoleChange(user, e.target.value)}
+                                                className="role-select"
+                                            >
+                                                <option value="USER">USER</option>
+                                                <option value="ADMIN">ADMIN</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <button
+                                                onClick={() => handleDelete(user)}
+                                                disabled={isSelf}
+                                                className="delete-button"
+                                            >
+                                                Löschen
+                                            </button>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </main>
+                <Footer />
+            </div>
+        </AdminGuard>
     );
 }
