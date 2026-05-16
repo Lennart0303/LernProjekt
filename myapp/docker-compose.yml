@@ -9,7 +9,7 @@ services:
     expose:
       - "8080"
     volumes:
-      - ./backend/meals.db:/app/data/app.db
+      - ./data:/app/data
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - JWT_SECRET=${JWT_SECRET}
