@@ -20,6 +20,7 @@ services:
       - "traefik.http.routers.essensraf-backend.rule=Host(`terzenbach.com`) && PathPrefix(`/api`)"
       - "traefik.http.routers.essensraf-backend.entrypoints=websecure"
       - "traefik.http.routers.essensraf-backend.tls=true"
+      - "traefik.http.routers.essensraf-backend.tls.certresolver=letsencrypt"
       - "traefik.http.services.essensraf-backend.loadbalancer.server.port=8080"
 
   frontend:
@@ -39,9 +40,19 @@ services:
       - frontend_network
     labels:
       - "traefik.enable=true"
+      - "traefik.http.middlewares.strip-essensrad.stripprefix.prefixes=/essensrad"
+      - "traefik.http.routers.essensraf-next.rule=Host(`terzenbach.com`) && PathPrefix(`/essensrad/_next`)"
+      - "traefik.http.routers.essensraf-next.entrypoints=websecure"
+      - "traefik.http.routers.essensraf-next.tls=true"
+      - "traefik.http.routers.essensraf-next.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.essensraf-next.middlewares=strip-essensrad"
+      - "traefik.http.routers.essensraf-next.service=essensraf-frontend"
       - "traefik.http.routers.essensraf-frontend.rule=Host(`terzenbach.com`) && PathPrefix(`/essensrad`)"
       - "traefik.http.routers.essensraf-frontend.entrypoints=websecure"
       - "traefik.http.routers.essensraf-frontend.tls=true"
+      - "traefik.http.routers.essensraf-frontend.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.essensraf-frontend.middlewares=strip-essensrad"
+      - "traefik.http.routers.essensraf-frontend.service=essensraf-frontend"
       - "traefik.http.services.essensraf-frontend.loadbalancer.server.port=3000"
 
 networks:
