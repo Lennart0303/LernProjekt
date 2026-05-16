@@ -23,6 +23,7 @@ const navItems: NavItem[] = [
 ];
 
 const adminItems: NavItem[] = [
+  { label: 'Dashboard',          href: '/dashboard',         icon: 'dashboard' },
   { label: 'Registrieren',       href: '/register',          icon: 'person_add' },
   { label: 'Benutzer verwalten', href: '/benutzer',          icon: 'manage_accounts' },
   { label: 'Feedback einsehen',  href: '/feedback/einsehen', icon: 'rate_review' },

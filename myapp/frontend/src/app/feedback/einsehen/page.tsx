@@ -16,6 +16,7 @@ interface Feedback {
 export default function FeedbackEinsehen() {
     const { accessToken, login, logout } = useAuth();
     const [feedback, setFeedback] = useState<Feedback[]>([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if (!accessToken) return;
@@ -37,8 +38,9 @@ export default function FeedbackEinsehen() {
                 return res.json() as Promise<Feedback[]>;
             })
         )
-            .then(data => setFeedback(data))
+            .then(data => { setFeedback(data); setLoading(false); })
             .catch(err => {
+                setLoading(false);
                 if (err === "Auth-Abbruch" || err === "API-Fehler") return;
                 console.error("Unbekannter Fehler:", err);
                 toast.error("Unbekannter Fehler beim Laden der Feedbacks");
@@ -58,7 +60,20 @@ export default function FeedbackEinsehen() {
                         </div>
                     </div>
 
-                    {feedback.length === 0 ? (
+                    {loading ? (
+                        <div className="feedback-list">
+                            {[0, 1, 2].map(i => (
+                                <div key={i} className="feedbackcard-skeleton">
+                                    <div className="feedbackcard-accent" />
+                                    <div className="sk-fbody">
+                                        <div className="skeleton-line sk-id" />
+                                        <div className="skeleton-line sk-fb-1" />
+                                        <div className="skeleton-line sk-fb-2" />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : feedback.length === 0 ? (
                         <div className="feedback-empty">
                             <span className="material-symbols-outlined">rate_review</span>
                             <p>Noch keine Feedbacks vorhanden.</p>

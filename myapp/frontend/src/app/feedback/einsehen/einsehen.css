@@ -45,6 +45,26 @@
   font-size: 0.95rem;
 }
 
+/* Skeleton */
+.feedbackcard-skeleton {
+  background: #111111;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  max-width: 720px;
+}
+
+.sk-fbody {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sk-id   { height: 10px; width: 80px; }
+.sk-fb-1 { height: 13px; width: 100%; }
+.sk-fb-2 { height: 13px; width: 70%; }
+
 .feedback-empty {
   text-align: center;
   padding: 60px 20px;

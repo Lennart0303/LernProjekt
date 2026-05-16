@@ -87,6 +87,13 @@
   cursor: not-allowed;
 }
 
+/* Skeleton */
+.skeleton-row td { padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.skeleton-row:last-child td { border-bottom: none; }
+.sk-user { height: 14px; width: 110px; }
+.sk-role { height: 28px; width: 80px;  border-radius: 6px; }
+.sk-btn  { height: 28px; width: 68px;  border-radius: 6px; }
+
 .delete-button {
   background: rgba(192, 57, 43, 0.15);
   color: #e74c3c;

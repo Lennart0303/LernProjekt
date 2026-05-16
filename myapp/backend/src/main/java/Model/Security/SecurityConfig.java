@@ -81,6 +81,8 @@ public class SecurityConfig {
                                                 .requestMatchers("/actuator/health").permitAll()
                                                 // öffentlich: Login/Register
                                                 .requestMatchers("/api/auth/**").permitAll()
+                                                // öffentlich: Seitenbesuche tracken
+                                                .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/analytics/track").permitAll()
                                                 // nur Admins: z.B. Nutzerverwaltung
                                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                                                 // normale User‑Funktionen

@@ -18,6 +18,7 @@ export default function MealPage() {
     const { accessToken, login, logout } = useAuth();
     const [search, setSearch] = useState("");
     const [meals, setMeals] = useState<Meal[]>([]);
+    const [loading, setLoading] = useState(true);
     const [statusMessage, setStatusMessage] = useState("");
     const [expandedId, setExpandedId] = useState<number | null>(null);
 
@@ -40,8 +41,9 @@ export default function MealPage() {
                 return res.json() as Promise<Meal[]>;
             })
         )
-            .then(data => setMeals(data))
+            .then(data => { setMeals(data); setLoading(false); })
             .catch(err => {
+                setLoading(false);
                 if (err === "Auth-Abbruch" || err === "API-Fehler") return;
                 console.error("Unbekannter Fehler:", err);
                 setStatusMessage("Unbekannter Fehler beim Laden der Gerichte");
@@ -142,7 +144,22 @@ export default function MealPage() {
                 )}
 
                 {/* Cards */}
-                {meals.length === 0 ? (
+                {loading ? (
+                    <div className="meal-grid">
+                        {[0, 1, 2].map(i => (
+                            <div key={i} className="mealcard-skeleton">
+                                <div className="mealcard-accent" />
+                                <div className="sk-body">
+                                    <div className="skeleton-line sk-pill" />
+                                    <div className="skeleton-line sk-title" />
+                                    <div className="skeleton-line sk-text" />
+                                    <div className="skeleton-line sk-text-short" />
+                                    <div className="skeleton-line sk-kcal" />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : meals.length === 0 ? (
                     <div className="meal-empty">
                         <span className="material-symbols-outlined">restaurant_menu</span>
                         <p>Keine Gerichte gefunden.</p>

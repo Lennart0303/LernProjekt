@@ -4,6 +4,7 @@ import "./globals.css";
 
 import AuthGate from "@/components/context/AuthGate";
 import CookieConsent from "@/components/CookieConsent/CookieConsent";
+import PageTracker from "@/components/PageTracker/PageTracker";
 
 export const metadata: Metadata = {
   title: "Dreh & Schmatz",
@@ -37,6 +38,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           Zum Inhalt springen
         </a>
         <CookieConsent />
+        <PageTracker />
         <AuthGate>{children}</AuthGate>
       </body>
     </html>

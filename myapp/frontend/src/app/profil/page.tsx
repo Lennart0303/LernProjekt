@@ -166,9 +166,17 @@ export default function ProfilPage() {
             </div>
           </div>
         ) : (
-          <div style={{ color: '#555', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>hourglass_empty</span>
-            Profil wird geladen...
+          <div style={{ maxWidth: '520px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <div className="skeleton-line" style={{ width: '52px', height: '52px', borderRadius: '50%', flexShrink: 0 }} />
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <div className="skeleton-line" style={{ height: '18px', width: '55%' }} />
+                  <div className="skeleton-line" style={{ height: '11px', width: '35%' }} />
+                </div>
+              </div>
+              <div className="skeleton-line" style={{ height: '58px', borderRadius: '8px' }} />
+            </div>
           </div>
         )}
       </main>

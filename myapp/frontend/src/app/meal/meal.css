@@ -179,6 +179,29 @@
   border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
+/* Skeleton */
+.mealcard-skeleton {
+  background: #111111;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.sk-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sk-pill  { height: 20px; width: 55px;  border-radius: 20px; }
+.sk-title { height: 18px; width: 65%; }
+.sk-text  { height: 11px; width: 100%; }
+.sk-text-short { height: 11px; width: 75%; }
+.sk-kcal  { height: 11px; width: 35%; margin-top: 6px; }
+
 .meal-empty {
   text-align: center;
   padding: 60px 20px;

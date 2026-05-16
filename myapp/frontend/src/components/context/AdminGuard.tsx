@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/context/AuthContext";
-import toast from "react-hot-toast";
 
 export function AdminGuard({ children }: { children: React.ReactNode }) {
   const { role } = useAuth();
@@ -11,7 +10,6 @@ export function AdminGuard({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (role !== null && role !== "ADMIN") {
-      toast.error("Kein Zugriff");
       router.replace("/");
     }
   }, [role, router]);

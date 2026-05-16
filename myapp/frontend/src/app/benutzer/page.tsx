@@ -25,6 +25,7 @@ function getUsernameFromToken(token: string | null): string | null {
 export default function BenutzerVerwalten() {
     const { accessToken, login, logout } = useAuth();
     const [users, setUsers] = useState<User[]>([]);
+    const [loading, setLoading] = useState(true);
     const currentUsername = getUsernameFromToken(accessToken);
 
     const fetchUsers = useCallback(() => {
@@ -38,8 +39,9 @@ export default function BenutzerVerwalten() {
                 if (!res.ok) { toast.error(`Fehler (Code ${res.status})`); return Promise.reject("API-Fehler"); }
                 return res.json() as Promise<User[]>;
             }))
-            .then(setUsers)
+            .then(data => { setUsers(data); setLoading(false); })
             .catch(err => {
+                setLoading(false);
                 if (err !== "Auth-Abbruch" && err !== "API-Fehler") console.error(err);
             });
     }, [accessToken, login, logout]);
@@ -104,7 +106,15 @@ export default function BenutzerVerwalten() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {users.map(user => {
+                                {loading ? (
+                                    [0, 1, 2].map(i => (
+                                        <tr key={i} className="skeleton-row">
+                                            <td><div className="skeleton-line sk-user" /></td>
+                                            <td><div className="skeleton-line sk-role" /></td>
+                                            <td><div className="skeleton-line sk-btn" /></td>
+                                        </tr>
+                                    ))
+                                ) : users.map(user => {
                                     const isSelf = user.username === currentUsername;
                                     return (
                                         <tr key={user.id}>
